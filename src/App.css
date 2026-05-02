@@ -449,3 +449,32 @@ body {
   font-size: 36px;
   line-height: 1.35;
 }
+
+.edit-mode-banner {
+  background: #fff3cd;
+  color: #6b4e00;
+  border: 1px solid #ffe08a;
+  border-radius: 14px;
+  padding: 14px;
+  font-weight: 800;
+  text-align: center;
+}
+
+.cancel-edit-btn {
+  background: #444 !important;
+}
+
+.post-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.admin-thumb {
+  display: block;
+  width: 140px;
+  max-height: 90px;
+  object-fit: cover;
+  border-radius: 12px;
+  margin-top: 10px;
+}
