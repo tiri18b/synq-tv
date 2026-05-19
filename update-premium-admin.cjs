@@ -1,4 +1,6 @@
-import { useEffect, useState } from "react";
+﻿const fs = require("fs");
+
+fs.writeFileSync("src/pages/Admin.jsx", `import { useEffect, useState } from "react";
 import { supabase } from "../lib/supabase";
 import { useNavigate } from "react-router-dom";
 
@@ -273,3 +275,6 @@ export default function Admin() {
     </div>
   );
 }
+`, "utf8");
+
+console.log("Admin premium updated");
