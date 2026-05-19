@@ -528,3 +528,19 @@ select option {
 .synq-tv-logo {
   max-height: 180px;
 }
+
+.synq-tv-left {
+  justify-content: start;
+}
+
+.synq-tv-logo {
+  width: 320px;
+  max-height: 170px;
+  margin: 0 auto 10px;
+  display: block;
+}
+
+.synq-building {
+  height: calc(100vh - 300px);
+  min-height: 420px;
+}
