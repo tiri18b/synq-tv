@@ -14,7 +14,7 @@ export default function App() {
         <Route
           path="/"
           element={
-            <div className="synq-home">
+            <div className="synq-hom  e">
               <img src="/synq-logo.png" className="home-logo" />
               <h1>מערכת הודעות דיגיטלית למעון סטודנטים</h1>
 

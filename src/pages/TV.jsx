@@ -31,7 +31,7 @@ export default function TV() {
 
     try {
       const res = await fetch(
-        `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,weather_code&forecast_days=1`
+        `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,weather_code&timezone=Asia%2FJerusalem&forecast_days=1`
       );
       const data = await res.json();
       setWeather(data.current);
@@ -169,7 +169,9 @@ export default function TV() {
 
         <div className="info-card weather-card">
           <span>{settings.weather_city || "תל אביב"}</span>
-          <div className="weather-icon">☀️☁️</div>
+          <div className="weather-icon">
+            {weather?.weather_code < 3 ? "☀️" : weather?.weather_code < 50 ? "⛅" : weather?.weather_code < 70 ? "🌧️" : "☁️"}
+          </div>
           <strong>{weather ? Math.round(weather.temperature_2m) + "°" : "--"}</strong>
           <b>מזג אוויר נוכחי</b>
         </div>
