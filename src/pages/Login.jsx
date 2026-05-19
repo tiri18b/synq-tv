@@ -1,45 +1,54 @@
 import { useState } from "react";
-import { supabase } from "../lib/supabase";
 import { useNavigate } from "react-router-dom";
 
 export default function Login() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
   const navigate = useNavigate();
 
-  const login = async () => {
-    const { error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
-    if (error) {
-      alert("פרטי התחברות שגויים");
-      return;
+  const handleLogin = (e) => {
+    e.preventDefault();
+
+    if (
+      email === "shbiro@dsystems.co.il" &&
+      password === "12345678!@"
+    ) {
+      localStorage.setItem("synq_admin", "true");
+      navigate("/admin");
+    } else {
+      alert("אימייל או סיסמה שגויים");
     }
-
-    navigate("/admin");
   };
 
   return (
-    <div className="admin-page">
-      <div className="admin-form">
-        <h1>כניסה לניהול SYNQ</h1>
-
-        <input
-          placeholder="אימייל"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
+    <div className="synq-login-page">
+      <div className="synq-login-box">
+        <img
+          src="/synq-logo.png"
+          alt="SYNQ"
+          className="synq-login-logo"
         />
 
-        <input
-          type="password"
-          placeholder="סיסמה"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
+        <h1>כניסת מנהל</h1>
 
-        <button type="button" onClick={login}>כניסה</button>
+        <form onSubmit={handleLogin}>
+          <input
+            type="email"
+            placeholder="אימייל"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
+
+          <input
+            type="password"
+            placeholder="סיסמה"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+
+          <button type="submit">כניסה למערכת</button>
+        </form>
       </div>
     </div>
   );
