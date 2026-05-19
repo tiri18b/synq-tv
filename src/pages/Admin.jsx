@@ -54,27 +54,24 @@ export default function Admin() {
   };
 
   const saveWeatherSettings = async () => {
-    const updates = [
+    const rows = [
       { key: "weather_city", value: weatherCity },
       { key: "weather_lat", value: weatherLat },
       { key: "weather_lon", value: weatherLon },
     ];
 
-    for (const item of updates) {
-      const { error } = await supabase
-        .from("app_settings")
-        .update({ value: item.value })
-        .eq("key", item.key);
+    const { error } = await supabase
+      .from("app_settings")
+      .upsert(rows, { onConflict: "key" });
 
-      if (error) {
-        console.log("Settings update error:", error);
-        alert("שגיאה בשמירת מזג אוויר");
-        return;
-      }
+    if (error) {
+      console.log("Settings save error:", error);
+      alert("שגיאה בשמירת מיקום מזג האוויר");
+      return;
     }
 
-    alert("הגדרות מזג האוויר עודכנו");
-    loadSettings();
+    alert("מיקום מזג האוויר נשמר בהצלחה");
+    await loadSettings();
   };
 
   const uploadImage = async () => {
