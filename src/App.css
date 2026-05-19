@@ -508,3 +508,23 @@ select option {
   background: #0b1120;
   color: white;
 }
+.synq-tv-side {
+  min-width: 0;
+}
+
+.info-card {
+  min-height: 190px;
+}
+
+.weather-card {
+  min-height: 240px;
+}
+
+.weather-card strong {
+  font-size: 52px !important;
+  line-height: 1;
+}
+
+.synq-tv-logo {
+  max-height: 180px;
+}

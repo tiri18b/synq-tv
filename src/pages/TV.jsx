@@ -172,7 +172,7 @@ export default function TV() {
           <div className="weather-icon">
             {weather?.weather_code < 3 ? "☀️" : weather?.weather_code < 50 ? "⛅" : weather?.weather_code < 70 ? "🌧️" : "☁️"}
           </div>
-          <strong>{weather ? Math.round(weather.temperature_2m) + "°" : "--"}</strong>
+          <strong>{weather ? Math.round(weather.temperature) + "°" : "--"}</strong>
           <b>מזג אוויר נוכחי</b>
         </div>
       </aside>
