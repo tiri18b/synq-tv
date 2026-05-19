@@ -61,9 +61,16 @@ export default function Admin() {
     ];
 
     for (const item of updates) {
-      await supabase
+      const { error } = await supabase
         .from("app_settings")
-        .upsert(item, { onConflict: "key" });
+        .update({ value: item.value })
+        .eq("key", item.key);
+
+      if (error) {
+        console.log("Settings update error:", error);
+        alert("שגיאה בשמירת מזג אוויר");
+        return;
+      }
     }
 
     alert("הגדרות מזג האוויר עודכנו");
