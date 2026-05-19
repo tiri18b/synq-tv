@@ -649,3 +649,65 @@ select option {
     0 0 25px rgba(217,70,239,.55),
     0 0 50px rgba(217,70,239,.25);
 }
+/* FORCE CENTER HOME */
+.synq-home {
+  min-height: 100vh !important;
+  width: 100vw !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  text-align: center !important;
+  background:
+    radial-gradient(circle at center top, rgba(139, 92, 246, 0.28), transparent 42%),
+    linear-gradient(180deg, #020617 0%, #030712 100%) !important;
+  color: white !important;
+  overflow: hidden !important;
+  direction: rtl !important;
+}
+
+.synq-home-content {
+  width: 100% !important;
+  max-width: 900px !important;
+  margin: 0 auto !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 34px !important;
+}
+
+.synq-home-logo {
+  width: 430px !important;
+  max-width: 80vw !important;
+  height: auto !important;
+  object-fit: contain !important;
+  display: block !important;
+  margin: 0 auto !important;
+  filter: drop-shadow(0 0 24px rgba(168, 85, 247, 0.45)) !important;
+}
+
+.synq-home h1 {
+  margin: 0 !important;
+  color: white !important;
+  font-size: 42px !important;
+  font-weight: 900 !important;
+  text-align: center !important;
+}
+
+.synq-home-buttons {
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  gap: 24px !important;
+}
+
+.synq-home-buttons a {
+  background: linear-gradient(135deg, #7c3aed, #d946ef) !important;
+  color: white !important;
+  text-decoration: none !important;
+  padding: 18px 42px !important;
+  border-radius: 18px !important;
+  font-size: 24px !important;
+  font-weight: 900 !important;
+  box-shadow: 0 0 30px rgba(168, 85, 247, 0.35) !important;
+}
