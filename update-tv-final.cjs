@@ -1,4 +1,6 @@
-import { useEffect, useMemo, useState } from "react";
+﻿const fs = require("fs");
+
+fs.writeFileSync("src/pages/TV.jsx", `import { useEffect, useMemo, useState } from "react";
 import { supabase } from "../lib/supabase";
 
 export default function TV() {
@@ -31,7 +33,7 @@ export default function TV() {
 
     try {
       const res = await fetch(
-        `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,weather_code&forecast_days=1`
+        \`https://api.open-meteo.com/v1/forecast?latitude=\${lat}&longitude=\${lon}&current=temperature_2m,weather_code&forecast_days=1\`
       );
       const data = await res.json();
       setWeather(data.current);
@@ -181,3 +183,6 @@ export default function TV() {
     </div>
   );
 }
+`, "utf8");
+
+console.log("TV updated");

@@ -1,4 +1,6 @@
-import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
+﻿const fs = require("fs");
+
+fs.writeFileSync("src/App.jsx", `import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
 import TV from "./pages/TV.jsx";
 import Admin from "./pages/Admin.jsx";
 import Login from "./pages/Login.jsx";
@@ -29,3 +31,6 @@ export default function App() {
     </BrowserRouter>
   );
 }
+`, "utf8");
+
+console.log("App updated");
