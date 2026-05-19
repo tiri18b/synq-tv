@@ -1,4 +1,6 @@
-import { useState } from "react";
+﻿const fs = require("fs");
+
+fs.writeFileSync("src/pages/Login.jsx", `import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "../lib/supabase";
 
@@ -53,3 +55,6 @@ export default function Login() {
     </div>
   );
 }
+`, "utf8");
+
+console.log("Login fixed to Supabase auth");
