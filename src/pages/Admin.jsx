@@ -14,6 +14,81 @@ const menu = [
   ["settings", "הגדרות"],
 ];
 
+const demoContent = {
+  events: {
+    title: "אירועים",
+    intro: "מודול אירועים יכול להפוך את המסך למרכז קהילתי חי, עם פרסום פעילויות, הרשמות ועדכונים בזמן אמת.",
+    items: [
+      ["לוח אירועים חודשי", "הצגת אירועים קרובים לפי תאריך ושעה."],
+      ["הרשמה לאירועים", "דיירים יוכלו להירשם דרך אפליקציה או קישור."],
+      ["תזכורות למסך TV", "אירוע חשוב יקפוץ אוטומטית למסך הראשי."],
+      ["פילוח לפי קומה", "אפשר להציג אירועים רק לדיירים מסוימים."],
+      ["ניהול מהדשבורד", "הוספה ועריכה ישירה מתוך מסך המנהל."],
+      ["מודול בתשלום", "ניתן לפיתוח מלא לפי אפיון ותמחור נפרד."],
+    ],
+  },
+  personal: {
+    title: "איזור אישי",
+    intro: "מודול איזור אישי יכול להפוך את SYNQ מפלטפורמת תצוגה למערכת דיירים מלאה.",
+    items: [
+      ["פרופיל דייר", "פרטים אישיים, מספר חדר והרשאות."],
+      ["הודעות אישיות", "הודעות פרטיות לדייר או לקבוצה."],
+      ["מסמכים", "חוזים, נהלים וטפסים במקום אחד."],
+      ["חיבור לאפליקציה", "בסיס עתידי לאפליקציית דיירים."],
+      ["הרשאות", "ניהול לפי דייר, הנהלה וקבלה."],
+      ["מודול בתשלום", "ניתן לפיתוח מלא לפי אפיון ותמחור נפרד."],
+    ],
+  },
+  service: {
+    title: "קריאות שירות",
+    intro: "מודול קריאות שירות יכול להפוך כל תקלה לתהליך מסודר עם סטטוס, אחריות ודוחות.",
+    items: [
+      ["פתיחת תקלה", "דייר פותח תקלה לפי קטגוריה."],
+      ["סטטוס טיפול", "פתוח, בטיפול, ממתין, נסגר."],
+      ["שיוך לטכנאי", "חלוקה לפי צוות תחזוקה."],
+      ["צירוף תמונה", "אפשרות לצרף צילום של התקלה."],
+      ["דוחות הנהלה", "כמה תקלות נפתחו ונסגרו בכל חודש."],
+      ["מודול בתשלום", "ניתן לפיתוח מלא לפי אפיון ותמחור נפרד."],
+    ],
+  },
+  packages: {
+    title: "חבילות",
+    intro: "מודול חבילות יכול לחסוך עומס בדלפק הקבלה ולעדכן דיירים בזמן אמת.",
+    items: [
+      ["חבילות שהתקבלו", "רשימת חבילות לפי דייר וחדר."],
+      ["התראת איסוף", "הודעה לדייר שהחבילה ממתינה."],
+      ["סטטוס איסוף", "ממתין, נאסף, הוחזר."],
+      ["סריקה עתידית", "אפשרות עתידית לברקוד או QR."],
+      ["דוח עומסים", "כמה חבילות מתקבלות בכל יום."],
+      ["מודול בתשלום", "ניתן לפיתוח מלא לפי אפיון ותמחור נפרד."],
+    ],
+  },
+  maintenance: {
+    title: "תחזוקה",
+    intro: "מודול תחזוקה מאפשר להציג עבודות יזומות ולמנוע בלבול אצל הדיירים.",
+    items: [
+      ["עבודות מתוכננות", "הודעה מראש על ניקיון, תיקונים או הפסקות."],
+      ["תחזוקה לפי אזור", "קומה, חדר כביסה, לובי או חניון."],
+      ["התראות דחופות", "הקפצה למסך TV בעת צורך."],
+      ["היסטוריית עבודות", "מעקב אחר עבודות שבוצעו."],
+      ["תיאום מול ספקים", "ניהול תאריכים ושעות פעילות."],
+      ["מודול בתשלום", "ניתן לפיתוח מלא לפי אפיון ותמחור נפרד."],
+    ],
+  },
+  reception: {
+    title: "דלפק קבלה",
+    intro: "מודול דלפק קבלה מאפשר להעביר לדיירים מידע חשוב בצורה ברורה ומיידית.",
+    items: [
+      ["שעות פעילות", "הצגת שעות קבלה ושינויים מיוחדים."],
+      ["הודעות הנהלה", "עדכונים כלליים לכל הדיירים."],
+      ["יצירת קשר", "טלפון, וואטסאפ או מייל."],
+      ["נהלים", "כללי בניין, אורחים, חניה ושירותים."],
+      ["תצוגה במסכים", "אפשר להציג הודעות לפי מסך או אזור."],
+      ["מודול בתשלום", "ניתן לפיתוח מלא לפי אפיון ותמחור נפרד."],
+    ],
+  },
+};
+
 export default function Admin() {
   const navigate = useNavigate();
   const [active, setActive] = useState("dashboard");
@@ -24,7 +99,7 @@ export default function Admin() {
   const [weatherCity, setWeatherCity] = useState("חיפה");
   const [weatherLat, setWeatherLat] = useState("32.7940");
   const [weatherLon, setWeatherLon] = useState("34.9896");
-  const [clockPosition, setClockPosition] = useState("right");
+  const [clockPosition, setClockPosition] = useState("center");
 
   const loadPosts = async () => {
     const { data } = await supabase.from("posts").select("*").order("created_at", { ascending: false });
@@ -47,7 +122,7 @@ export default function Admin() {
       setWeatherCity(obj.weather_city || "חיפה");
       setWeatherLat(obj.weather_lat || "32.7940");
       setWeatherLon(obj.weather_lon || "34.9896");
-      setClockPosition(obj.clock_position || "right");
+      setClockPosition(obj.clock_position || "center");
     };
 
     init();
@@ -91,7 +166,7 @@ export default function Admin() {
     loadPosts();
   };
 
-  const saveWeather = async () => {
+  const saveSettings = async () => {
     await supabase.from("app_settings").upsert(
       [
         { key: "weather_city", value: weatherCity },
@@ -101,24 +176,28 @@ export default function Admin() {
       ],
       { onConflict: "key" }
     );
-    alert("נשמר");
+    alert("ההגדרות נשמרו");
+  };
+
+  const logout = async () => {
+    await supabase.auth.signOut();
+    navigate("/login");
   };
 
   const pageTitle = menu.find((item) => item[0] === active)?.[1] || "דשבורד";
+  const demo = demoContent[active];
 
   return (
     <main className="admin-page">
       <aside>
-        <img src="/synq-logo.png" />
+        <img src="/synq-logo.png" alt="SYNQ" />
         {menu.map((item) => (
           <button key={item[0]} className={active === item[0] ? "on" : ""} onClick={() => setActive(item[0])}>
             {item[1]}
           </button>
         ))}
-        <a href="/tv" target="_blank">פתיחת מסך TV</a>
-        <button onClick={async () => { await supabase.auth.signOut(); navigate("/login"); }}>
-          יציאה
-        </button>
+        <a href="/tv" target="_blank" rel="noreferrer">פתיחת מסך TV</a>
+        <button className="logout-btn" onClick={logout}>יציאה</button>
       </aside>
 
       <section className="admin-content">
@@ -172,57 +251,42 @@ export default function Admin() {
           </>
         )}
 
-        {["events", "personal", "service", "packages", "maintenance", "reception"].includes(active) && (
+        {demo && (
           <div className="admin-card">
-            <h2>{pageTitle} | דף דוגמה</h2>
-            <p className="demo-intro">
-              מודול זה מוצג כרגע כדוגמה. ניתן להפוך אותו לפיתוח מלא לפי דרישת הלקוח,
-              כולל ניהול מהדשבורד, הרשאות, התראות, סטטוסים ודוחות.
-            </p>
-
+            <h2>{demo.title} | דף דוגמה</h2>
+            <p className="demo-intro">{demo.intro}</p>
             <div className="demo-grid detailed">
-              <article>
-                <b>ניהול תוכן</b>
-                <span>הוספה, עריכה ומחיקה של פריטים מתוך מסך הניהול.</span>
-              </article>
-              <article>
-                <b>התראות ועדכונים</b>
-                <span>אפשרות לשליחת הודעות למסכים, לדיירים או לקומות מסוימות.</span>
-              </article>
-              <article>
-                <b>סטטוס ומעקב</b>
-                <span>מעקב אחר טיפול, אישור ביצוע, היסטוריה ודוחות.</span>
-              </article>
-              <article>
-                <b>הרשאות משתמשים</b>
-                <span>מנהל ראשי, מנהל קבלה, תחזוקה, הנהלה ודיירים.</span>
-              </article>
-              <article>
-                <b>חיבור עתידי לאפליקציה</b>
-                <span>אפשרות להרחבה לאפליקציית דיירים והתראות Push.</span>
-              </article>
-              <article>
-                <b>מודול בתשלום</b>
-                <span>כל מודול ניתן לפיתוח מלא לפי אפיון ותמחור נפרד.</span>
-              </article>
+              {demo.items.map(([head, text]) => (
+                <article key={head}>
+                  <b>{head}</b>
+                  <span>{text}</span>
+                </article>
+              ))}
             </div>
           </div>
         )}
 
         {active === "settings" && (
           <div className="admin-card">
-            <h2>הגדרות מזג אוויר</h2>
+            <h2>הגדרות מסך TV</h2>
+            <label className="admin-field-label">שם עיר למזג אוויר</label>
             <input value={weatherCity} onChange={(e) => setWeatherCity(e.target.value)} />
+
+            <label className="admin-field-label">קו רוחב</label>
             <input value={weatherLat} onChange={(e) => setWeatherLat(e.target.value)} />
+
+            <label className="admin-field-label">קו אורך</label>
             <input value={weatherLon} onChange={(e) => setWeatherLon(e.target.value)} />
-            <label className="admin-label">מיקום שעון במסך TV</label>
+
+            <label className="admin-field-label">מיקום שעה ותאריך במסך TV</label>
             <select value={clockPosition} onChange={(e) => setClockPosition(e.target.value)}>
-              <option value="right">ימין למעלה</option>
-              <option value="center">אמצע למעלה</option>
               <option value="left">שמאל למעלה</option>
+              <option value="center">אמצע למעלה</option>
+              <option value="right">ימין למעלה</option>
               <option value="bottom">למטה במרכז</option>
             </select>
-            <button onClick={saveWeather}>שמירת הגדרות</button>
+
+            <button onClick={saveSettings}>שמירת הגדרות</button>
           </div>
         )}
       </section>

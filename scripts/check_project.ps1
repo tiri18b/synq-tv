@@ -1,4 +1,4 @@
-﻿param(
+param(
     [switch]$SkipInstall
 )
 
@@ -6,7 +6,6 @@ $ErrorActionPreference = "Stop"
 
 Write-Host ""
 Write-Host "SYNQ project check started" -ForegroundColor Cyan
-Write-Host ""
 
 if (!(Test-Path ".\package.json")) {
     Write-Host "package.json not found. Run this script from the project root." -ForegroundColor Red
@@ -27,10 +26,7 @@ if (!(Test-Path ".\src\assets\building.jpeg")) {
     Write-Host "Warning: src\assets\building.jpeg not found." -ForegroundColor Yellow
 }
 
-Write-Host "Checking Node..." -ForegroundColor Cyan
 node -v
-
-Write-Host "Checking npm..." -ForegroundColor Cyan
 npm -v
 
 if (!$SkipInstall) {
@@ -40,8 +36,6 @@ if (!$SkipInstall) {
     }
 }
 
-Write-Host ""
-Write-Host "Running production build..." -ForegroundColor Cyan
 npm run build
 
 Write-Host ""
