@@ -145,7 +145,7 @@ export default function TV() {
       <section className="tv-right">
         <img src="/building.jpeg" className="building-bg" />
 
-        <section className="weather-clock">
+        <section className={"weather-clock clock-" + (settings.clock_position || "right")}>
           <strong>{now.toLocaleTimeString("he-IL", { hour: "2-digit", minute: "2-digit" })}</strong>
           <span>{now.toLocaleDateString("he-IL", { weekday: "long", day: "numeric", month: "long" })}</span>
           <strong>{weather ? Math.round(Number(weather.temperature)) + "°" : "--"}</strong>

@@ -24,6 +24,7 @@ export default function Admin() {
   const [weatherCity, setWeatherCity] = useState("חיפה");
   const [weatherLat, setWeatherLat] = useState("32.7940");
   const [weatherLon, setWeatherLon] = useState("34.9896");
+  const [clockPosition, setClockPosition] = useState("right");
 
   const loadPosts = async () => {
     const { data } = await supabase.from("posts").select("*").order("created_at", { ascending: false });
@@ -46,6 +47,7 @@ export default function Admin() {
       setWeatherCity(obj.weather_city || "חיפה");
       setWeatherLat(obj.weather_lat || "32.7940");
       setWeatherLon(obj.weather_lon || "34.9896");
+      setClockPosition(obj.clock_position || "right");
     };
 
     init();
@@ -95,6 +97,7 @@ export default function Admin() {
         { key: "weather_city", value: weatherCity },
         { key: "weather_lat", value: weatherLat },
         { key: "weather_lon", value: weatherLon },
+        { key: "clock_position", value: clockPosition },
       ],
       { onConflict: "key" }
     );
@@ -113,6 +116,9 @@ export default function Admin() {
           </button>
         ))}
         <a href="/tv" target="_blank">פתיחת מסך TV</a>
+        <button onClick={async () => { await supabase.auth.signOut(); navigate("/login"); }}>
+          יציאה
+        </button>
       </aside>
 
       <section className="admin-content">
@@ -169,11 +175,36 @@ export default function Admin() {
         {["events", "personal", "service", "packages", "maintenance", "reception"].includes(active) && (
           <div className="admin-card">
             <h2>{pageTitle} | דף דוגמה</h2>
-            <p>מודול אופציונלי להצגה עתידית ללקוח.</p>
-            <div className="demo-grid">
-              <article>פריט לדוגמה 1</article>
-              <article>פריט לדוגמה 2</article>
-              <article>פריט לדוגמה 3</article>
+            <p className="demo-intro">
+              מודול זה מוצג כרגע כדוגמה. ניתן להפוך אותו לפיתוח מלא לפי דרישת הלקוח,
+              כולל ניהול מהדשבורד, הרשאות, התראות, סטטוסים ודוחות.
+            </p>
+
+            <div className="demo-grid detailed">
+              <article>
+                <b>ניהול תוכן</b>
+                <span>הוספה, עריכה ומחיקה של פריטים מתוך מסך הניהול.</span>
+              </article>
+              <article>
+                <b>התראות ועדכונים</b>
+                <span>אפשרות לשליחת הודעות למסכים, לדיירים או לקומות מסוימות.</span>
+              </article>
+              <article>
+                <b>סטטוס ומעקב</b>
+                <span>מעקב אחר טיפול, אישור ביצוע, היסטוריה ודוחות.</span>
+              </article>
+              <article>
+                <b>הרשאות משתמשים</b>
+                <span>מנהל ראשי, מנהל קבלה, תחזוקה, הנהלה ודיירים.</span>
+              </article>
+              <article>
+                <b>חיבור עתידי לאפליקציה</b>
+                <span>אפשרות להרחבה לאפליקציית דיירים והתראות Push.</span>
+              </article>
+              <article>
+                <b>מודול בתשלום</b>
+                <span>כל מודול ניתן לפיתוח מלא לפי אפיון ותמחור נפרד.</span>
+              </article>
             </div>
           </div>
         )}
@@ -184,7 +215,14 @@ export default function Admin() {
             <input value={weatherCity} onChange={(e) => setWeatherCity(e.target.value)} />
             <input value={weatherLat} onChange={(e) => setWeatherLat(e.target.value)} />
             <input value={weatherLon} onChange={(e) => setWeatherLon(e.target.value)} />
-            <button onClick={saveWeather}>שמירת מזג אוויר</button>
+            <label className="admin-label">מיקום שעון במסך TV</label>
+            <select value={clockPosition} onChange={(e) => setClockPosition(e.target.value)}>
+              <option value="right">ימין למעלה</option>
+              <option value="center">אמצע למעלה</option>
+              <option value="left">שמאל למעלה</option>
+              <option value="bottom">למטה במרכז</option>
+            </select>
+            <button onClick={saveWeather}>שמירת הגדרות</button>
           </div>
         )}
       </section>
