@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { supabase } from "../lib/supabase";
 
 const tickerText =
-  "הההגעתם הביתה - הגעתם ל- SYNQ * רשת המגורים החדשה לסטודנטים מקבוצת שבירו * SYNQ המקום שבו הכל קורה";
+  "הגעתם הביתה - הגעתם ל- SYNQ * רשת המגורים החדשה לסטודנטים מקבוצת שבירו * SYNQ המקום שבו הכל קורה";
 
 export default function TV() {
   const [posts, setPosts] = useState([]);
@@ -101,7 +101,7 @@ export default function TV() {
 
         <div className="welcome-box">
           <h1>ברוכים הבאים</h1>
-          <h2>למעונות סטודנטים</h2>
+          <h2>למעונות הסטודנטים</h2>
         </div>
 
         <div className="notice-box">
