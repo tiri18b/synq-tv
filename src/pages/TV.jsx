@@ -1,6 +1,8 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { supabase } from "../lib/supabase";
+import buildingImage from "../assets/building-client.jpeg";
+import "./TV.css";
 
 const tickerText =
   "הגעתם הביתה - הגעתם ל- SYNQ * רשת המגורים החדשה לסטודנטים מקבוצת שבירו * SYNQ המקום שבו הכל קורה";
@@ -23,6 +25,7 @@ export default function TV() {
 
   const loadSettings = async () => {
     const { data } = await supabase.from("app_settings").select("*");
+
     const obj = {};
     (data || []).forEach((row) => {
       obj[row.key] = row.value;
@@ -34,14 +37,15 @@ export default function TV() {
     const lon = obj.weather_lon || "34.9896";
 
     try {
-      const res = await fetch(
+      const response = await fetch(
         "https://api.open-meteo.com/v1/forecast?latitude=" +
-          lat +
+          encodeURIComponent(lat) +
           "&longitude=" +
-          lon +
+          encodeURIComponent(lon) +
           "&current_weather=true&timezone=Asia%2FJerusalem"
       );
-      const json = await res.json();
+
+      const json = await response.json();
       setWeather(json.current_weather || null);
     } catch {
       setWeather(null);
@@ -53,12 +57,14 @@ export default function TV() {
     loadSettings();
 
     const channel = supabase
-      .channel("synq-tv")
+      .channel("synq-tv-live")
       .on("postgres_changes", { event: "*", schema: "public", table: "posts" }, loadPosts)
       .on("postgres_changes", { event: "*", schema: "public", table: "app_settings" }, loadSettings)
       .subscribe();
 
-    const timer = setInterval(() => setNow(new Date()), 1000);
+    const timer = setInterval(() => {
+      setNow(new Date());
+    }, 1000);
 
     return () => {
       clearInterval(timer);
@@ -77,9 +83,10 @@ export default function TV() {
 
   if (urgent) {
     return (
-      <main className="tv-page urgent-screen">
-        <img src="/synq-logo.png" className="tv-logo" />
-        <section className="urgent-card">
+      <main className="client-tv client-tv-urgent">
+        <img src="/synq-logo.png" className="client-tv-urgent-logo" alt="SYNQ" />
+
+        <section className="client-tv-urgent-card">
           <span>הודעה דחופה</span>
           <h1>{urgent.title}</h1>
           <p>{urgent.content}</p>
@@ -89,24 +96,60 @@ export default function TV() {
   }
 
   return (
-    <main className="tv-page">
-      <section className="tv-left">
-        <img src="/synq-logo.png" className="tv-logo" />
+    <main className="client-tv">
+      <section className="client-tv-image-side">
+        <img src={buildingImage} className="client-tv-building" alt="בניין SYNQ" />
 
-        <section className="welcome">
+        <section className="client-tv-feature-grid">
+          <Link to="/feature/events">📅<b>אירועים</b><small>(אופציונלי)</small></Link>
+          <Link to="/feature/personal">👤<b>איזור אישי</b><small>(אופציונלי)</small></Link>
+          <Link to="/feature/service">🔧<b>קריאת שירות</b><small>(אופציונלי)</small></Link>
+          <Link to="/feature/packages">📦<b>חבילות</b><small>(אופציונלי)</small></Link>
+          <Link to="/feature/maintenance">🧹<b>תחזוקה</b><small>(אופציונלי)</small></Link>
+          <Link to="/feature/reception">🛎️<b>דלפק קבלה</b><small>(אופציונלי)</small></Link>
+        </section>
+      </section>
+
+      <section className="client-tv-content-side">
+        <section className="client-tv-live-info">
+          <div className="client-tv-live-row">
+            <span>🕒</span>
+            <strong>{now.toLocaleTimeString("he-IL", { hour: "2-digit", minute: "2-digit" })}</strong>
+          </div>
+
+          <div className="client-tv-live-row">
+            <span>📅</span>
+            <b>{now.toLocaleDateString("he-IL", { weekday: "long", day: "numeric", month: "long" })}</b>
+          </div>
+
+          <div className="client-tv-live-separator" />
+
+          <div className="client-tv-live-row">
+            <span>🌤️</span>
+            <strong>{weather ? Math.round(Number(weather.temperature)) + "°" : "--"}</strong>
+          </div>
+
+          <div className="client-tv-live-city">
+            {settings.weather_city || "חיפה"}
+          </div>
+        </section>
+
+        <img src="/synq-logo.png" className="client-tv-logo" alt="SYNQ By Shbiro" />
+
+        <section className="client-tv-welcome">
           <h1>ברוכים הבאים</h1>
           <h2>למעונות סטודנטים</h2>
         </section>
 
-        <section className="notice-panel">
+        <section className="client-tv-notices">
           <header>
-            <strong>הודעות חשובות</strong>
             <span>🔔</span>
+            <strong>הודעות חשובות</strong>
           </header>
 
           {visiblePosts.length > 0 ? (
             visiblePosts.map((post) => (
-              <article key={post.id} className="notice-row">
+              <article key={post.id}>
                 <span>📌</span>
                 <div>
                   <h3>{post.title}</h3>
@@ -116,21 +159,23 @@ export default function TV() {
             ))
           ) : (
             <>
-              <article className="notice-row">
+              <article>
                 <span>📅</span>
                 <div>
                   <h3>מפגש דיירים</h3>
                   <p>יום שלישי | 18:00 | חדר כנסים</p>
                 </div>
               </article>
-              <article className="notice-row">
+
+              <article>
                 <span>📦</span>
                 <div>
                   <h3>חבילות בדלפק הקבלה</h3>
                   <p>יש לאסוף בימים א׳ עד ה׳ בין 09:00-17:00</p>
                 </div>
               </article>
-              <article className="notice-row">
+
+              <article>
                 <span>🧹</span>
                 <div>
                   <h3>תחזוקה שוטפת</h3>
@@ -142,29 +187,9 @@ export default function TV() {
         </section>
       </section>
 
-      <section className="tv-right">
-        <img src="/building.jpeg" className="building-bg" />
-
-        <section className={"weather-clock clock-" + (settings.clock_position || "right")}>
-          <strong>{now.toLocaleTimeString("he-IL", { hour: "2-digit", minute: "2-digit" })}</strong>
-          <span>{now.toLocaleDateString("he-IL", { weekday: "long", day: "numeric", month: "long" })}</span>
-          <strong>{weather ? Math.round(Number(weather.temperature)) + "°" : "--"}</strong>
-          <span>{settings.weather_city || "חיפה"}</span>
-        </section>
-
-        <section className="feature-grid">
-          <Link to="/feature/events">📅<b>אירועים</b><small>(אופציונלי)</small></Link>
-          <Link to="/feature/personal">👤<b>איזור אישי</b><small>(אופציונלי)</small></Link>
-          <Link to="/feature/service">🔧<b>קריאת שירות</b><small>(אופציונלי)</small></Link>
-          <Link to="/feature/packages">📦<b>חבילות</b><small>(אופציונלי)</small></Link>
-          <Link to="/feature/maintenance">🧹<b>תחזוקה</b><small>(אופציונלי)</small></Link>
-          <Link to="/feature/reception">🛎️<b>דלפק קבלה</b><small>(אופציונלי)</small></Link>
-        </section>
-      </section>
-
-      <footer className="ticker">
-        <b>{now.toLocaleTimeString("he-IL", { hour: "2-digit", minute: "2-digit" })}</b>
+      <footer className="client-tv-ticker">
         <marquee>{tickerText}</marquee>
+        <b>{now.toLocaleTimeString("he-IL", { hour: "2-digit", minute: "2-digit" })}</b>
       </footer>
     </main>
   );
