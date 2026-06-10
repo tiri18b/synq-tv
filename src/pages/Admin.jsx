@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { supabase } from "../lib/supabase";
 
 const demoPages = {
@@ -26,6 +27,7 @@ const sampleData = {
 };
 
 export default function Admin() {
+  const navigate = useNavigate();
   const [activePage, setActivePage] = useState("dashboard");
   const [posts, setPosts] = useState([]);
   const [settings, setSettings] = useState({});
@@ -61,8 +63,18 @@ export default function Admin() {
   };
 
   useEffect(() => {
-    loadPosts();
-    loadSettings();
+    const init = async () => {
+      const { data } = await supabase.auth.getSession();
+      if (!data.session) {
+        navigate("/login");
+        return;
+      }
+
+      loadPosts();
+      loadSettings();
+    };
+
+    init();
   }, []);
 
   const savePost = async () => {
