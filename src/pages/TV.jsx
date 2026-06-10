@@ -111,7 +111,7 @@ export default function TV() {
       </section>
 
       <section className="client-tv-content-side">
-        <section className="client-tv-live-info">
+        <section className={"client-tv-live-info clock-" + (settings.clock_position || "center")}>
           <div className="client-tv-live-row">
             <span>🕒</span>
             <strong>{now.toLocaleTimeString("he-IL", { hour: "2-digit", minute: "2-digit" })}</strong>
