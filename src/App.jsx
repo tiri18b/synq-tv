@@ -1,34 +1,19 @@
-import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import TV from "./pages/TV.jsx";
 import Admin from "./pages/Admin.jsx";
 import Login from "./pages/Login.jsx";
+import FeaturePage from "./pages/FeaturePage.jsx";
 import "./App.css";
 
 export default function App() {
   return (
     <BrowserRouter>
       <Routes>
+        <Route path="/" element={<Navigate to="/tv" replace />} />
         <Route path="/tv" element={<TV />} />
         <Route path="/admin" element={<Admin />} />
         <Route path="/login" element={<Login />} />
-
-        <Route
-          path="/"
-          element={
-            <div className="synq-home">
-              <div className="synq-home-content">
-                <img src="/synq-logo.png" alt="SYNQ" className="synq-home-logo" />
-
-                <h1>מערכת הודעות דיגיטלית למעון סטודנטים</h1>
-
-                <div className="synq-home-buttons">
-                  <Link to="/tv">מסך TV</Link>
-                  <Link to="/login">כניסת מנהל</Link>
-                </div>
-              </div>
-            </div>
-          }
-        />
+        <Route path="/feature/:type" element={<FeaturePage />} />
       </Routes>
     </BrowserRouter>
   );

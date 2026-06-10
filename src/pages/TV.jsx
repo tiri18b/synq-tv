@@ -1,12 +1,15 @@
 import { useEffect, useMemo, useState } from "react";
+import { Link } from "react-router-dom";
 import { supabase } from "../lib/supabase";
+
+const tickerText =
+  "געתם הביתה - הגעתם ל- SYNQ * רשת המגורים החדשה לסטודנטים מקבוצת שבירו * SYNQ המקום שבו הכל קורה";
 
 export default function TV() {
   const [posts, setPosts] = useState([]);
   const [settings, setSettings] = useState({});
   const [weather, setWeather] = useState(null);
   const [now, setNow] = useState(new Date());
-  const [currentIndex, setCurrentIndex] = useState(0);
 
   const loadPosts = async () => {
     const { data } = await supabase
@@ -27,10 +30,7 @@ export default function TV() {
   };
 
   const loadWeather = async (lat, lon) => {
-    if (!lat || !lon) {
-      setWeather(null);
-      return;
-    }
+    if (!lat || !lon) return;
 
     try {
       const url =
@@ -48,11 +48,8 @@ export default function TV() {
           temperature: data.current_weather.temperature,
           code: data.current_weather.weathercode,
         });
-      } else {
-        setWeather(null);
       }
-    } catch (err) {
-      console.log("Weather error:", err);
+    } catch {
       setWeather(null);
     }
   };
@@ -62,31 +59,18 @@ export default function TV() {
     loadSettings();
 
     const channel = supabase
-      .channel("synq-live")
+      .channel("synq-tv-live")
       .on("postgres_changes", { event: "*", schema: "public", table: "posts" }, loadPosts)
       .on("postgres_changes", { event: "*", schema: "public", table: "app_settings" }, loadSettings)
       .subscribe();
 
     const clock = setInterval(() => setNow(new Date()), 1000);
-    const weatherTimer = setInterval(loadSettings, 10 * 60 * 1000);
 
     return () => {
-      supabase.removeChannel(channel);
       clearInterval(clock);
-      clearInterval(weatherTimer);
+      supabase.removeChannel(channel);
     };
   }, []);
-
-  useEffect(() => {
-    const regular = posts.filter((p) => p.type !== "urgent");
-    if (regular.length <= 1) return;
-
-    const timer = setInterval(() => {
-      setCurrentIndex((prev) => (prev + 1) % regular.length);
-    }, 8000);
-
-    return () => clearInterval(timer);
-  }, [posts.length]);
 
   const urgent = useMemo(() => {
     return posts.find((p) => {
@@ -95,71 +79,38 @@ export default function TV() {
     });
   }, [posts, now]);
 
-  const regularPosts = posts.filter((p) => p.type !== "urgent");
-  const importantPosts = posts
-    .filter((p) => p.type === "urgent" && (!p.urgent_until || new Date(p.urgent_until).getTime() <= now.getTime()))
-    .slice(0, 3);
-
-  const mainPost = regularPosts.length
-    ? regularPosts[currentIndex % regularPosts.length]
-    : null;
+  const importantPosts = posts.slice(0, 3);
 
   if (urgent) {
     return (
-      <div className="synq-urgent-screen">
-        <img src="/synq-logo.png" className="synq-tv-logo top" />
-
-        <div className="synq-urgent-card">
-          <div className="synq-pill">הודעה דחופה</div>
-          {urgent.image_url && <img src={urgent.image_url} className="urgent-img" />}
+      <div className="synq-showcase urgent-mode">
+        <img src="/synq-logo.png" className="showcase-logo" />
+        <div className="urgent-demo-card">
+          <span>הודעה דחופה</span>
           <h1>{urgent.title}</h1>
           <p>{urgent.content}</p>
-          <small>לחץ OK / Enter כדי להעביר לעדכון חשוב</small>
-        </div>
-
-        <div className="synq-time-box">
-          {now.toLocaleTimeString("he-IL", { hour: "2-digit", minute: "2-digit" })} · {now.toLocaleDateString("he-IL")}
         </div>
       </div>
     );
   }
 
   return (
-    <div className="synq-tv-screen">
-      <aside className="synq-tv-left">
-        <img src="/synq-logo.png" className="synq-tv-logo" />
+    <div className="synq-showcase">
+      <section className="showcase-left">
+        <img src="/synq-logo.png" className="showcase-logo" />
 
-        <div className="synq-building"></div>
-      </aside>
+        <div className="welcome-box">
+          <h1>ברוכים הבאים</h1>
+          <h2>למעונות סטודנטים</h2>
+        </div>
 
-      <main className="synq-tv-main">
-        <section className="synq-board">
-          <div className="board-title">
-            <span className="circle-icon">📣</span>
-            <h1>הודעות דיירים</h1>
-          </div>
-
-          {mainPost ? (
-            <div className="notice-content">
-              {mainPost.image_url && <img src={mainPost.image_url} className="notice-img" />}
-              <h2>{mainPost.title}</h2>
-              <p>{mainPost.content}</p>
-            </div>
-          ) : (
-            <div className="notice-content">
-              <h2>ברוכים הבאים למעון הסטודנטים SYNQ</h2>
-              <p>כאן יוצגו הודעות, אירועים ועדכונים לדיירים.</p>
-            </div>
-          )}
-        </section>
-
-        <section className="synq-board small-board">
-          <h2>עדכונים חשובים</h2>
+        <div className="notice-box">
+          <div className="notice-title">הודעות חשובות <span>🔔</span></div>
 
           {importantPosts.length ? (
             importantPosts.map((post) => (
-              <div className="important-row" key={post.id}>
-                <span>⚠️</span>
+              <div className="notice-item" key={post.id}>
+                <div className="notice-icon">📌</div>
                 <div>
                   <strong>{post.title}</strong>
                   <p>{post.content}</p>
@@ -167,35 +118,61 @@ export default function TV() {
               </div>
             ))
           ) : (
-            <p>אין עדכונים חשובים כרגע.</p>
+            <>
+              <div className="notice-item">
+                <div className="notice-icon">📅</div>
+                <div>
+                  <strong>מפגש דיירים</strong>
+                  <p>יום שלישי | 18:00 | חדר כנסים</p>
+                </div>
+              </div>
+              <div className="notice-item">
+                <div className="notice-icon">📦</div>
+                <div>
+                  <strong>חבילות בדלפק הקבלה</strong>
+                  <p>יש לאסוף בימים א׳-ה׳ בין 09:00-17:00</p>
+                </div>
+              </div>
+              <div className="notice-item">
+                <div className="notice-icon">🧹</div>
+                <div>
+                  <strong>תחזוקה שוטפת</strong>
+                  <p>ביום רביעי יבוצעו עבודות תחזוקה בבניין</p>
+                </div>
+              </div>
+            </>
           )}
-        </section>
-      </main>
-
-      <aside className="synq-tv-side">
-        <div className="info-card">
-          <span>יום</span>
-          <strong>{now.toLocaleDateString("he-IL", { weekday: "long" })}</strong>
-          <b>{now.toLocaleDateString("he-IL")}</b>
         </div>
+      </section>
 
-        <div className="info-card">
-          <span>שעה</span>
-          <strong>{now.toLocaleTimeString("he-IL", { hour: "2-digit", minute: "2-digit" })}</strong>
-        </div>
-
-        <div className="info-card weather-card">
-          <span>{settings.weather_city || "תל אביב"}</span>
-          <div className="weather-icon">
-            {weather?.code < 3 ? "☀️" : weather?.code < 50 ? "⛅" : weather?.code < 70 ? "🌧️" : "☁️"}
+      <section className="showcase-right">
+        <div className="top-info">
+          <div>
+            <strong>{now.toLocaleTimeString("he-IL", { hour: "2-digit", minute: "2-digit" })}</strong>
+            <span>{now.toLocaleDateString("he-IL", { weekday: "long", day: "numeric", month: "long" })}</span>
           </div>
-          <strong>{weather ? Number.isFinite(Number(weather.temperature)) ? Math.round(Number(weather.temperature)) + "°" : "--" : "--"}</strong>
-          <b>מזג אוויר נוכחי</b>
-        </div>
-      </aside>
 
-      <footer className="synq-ticker">
-        <span>{posts.map((p) => p.title).join(" • ") || "עדכונים חמים • אירועים • תחזוקה"}</span>
+          <div>
+            <strong>{weather ? Math.round(Number(weather.temperature)) + "°" : "--"}</strong>
+            <span>{settings.weather_city || "תל אביב"}</span>
+          </div>
+        </div>
+
+        <img src="/building.jpeg" className="building-image" />
+
+        <div className="tiles-row">
+          <Link to="/feature/events" className="feature-tile">📅<span>אירועים</span><small>(אופציונלי)</small></Link>
+          <Link to="/feature/personal" className="feature-tile">👤<span>איזור אישי</span><small>(אופציונלי)</small></Link>
+          <Link to="/feature/service" className="feature-tile">🔧<span>קריאת שירות</span><small>(אופציונלי)</small></Link>
+          <Link to="/feature/packages" className="feature-tile">📦<span>חבילות</span><small>(אופציונלי)</small></Link>
+          <Link to="/feature/maintenance" className="feature-tile">🧹<span>תחזוקה</span><small>(אופציונלי)</small></Link>
+          <Link to="/feature/reception" className="feature-tile">🛎️<span>דלפק קבלה</span><small>(אופציונלי)</small></Link>
+        </div>
+      </section>
+
+      <footer className="showcase-ticker">
+        <b>{now.toLocaleTimeString("he-IL", { hour: "2-digit", minute: "2-digit" })}</b>
+        <marquee>{tickerText}</marquee>
       </footer>
     </div>
   );
