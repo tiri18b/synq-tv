@@ -1,11 +1,11 @@
-import { useEffect, useMemo, useState } from "react";
+﻿import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { supabase } from "../lib/supabase";
-import buildingImage from "../assets/building-client.jpeg";
+import buildingImage from "../assets/building.jpeg";
 import "./TV.css";
 
 const tickerText =
-  "הגעתם הביתה - הגעתם ל- SYNQ * רשת המגורים החדשה לסטודנטים מקבוצת שבירו * SYNQ המקום שבו הכל קורה";
+  "×”×’×¢×ª× ×”×‘×™×ª×” - ×”×’×¢×ª× ×œ- SYNQ * ×¨×©×ª ×”×ž×’×•×¨×™× ×”×—×“×©×” ×œ×¡×˜×•×“× ×˜×™× ×ž×§×‘×•×¦×ª ×©×‘×™×¨×• * SYNQ ×”×ž×§×•× ×©×‘×• ×”×›×œ ×§×•×¨×”";
 
 export default function TV() {
   const [posts, setPosts] = useState([]);
@@ -87,7 +87,7 @@ export default function TV() {
         <img src="/synq-logo.png" className="client-tv-urgent-logo" alt="SYNQ" />
 
         <section className="client-tv-urgent-card">
-          <span>הודעה דחופה</span>
+          <span>×”×•×“×¢×” ×“×—×•×¤×”</span>
           <h1>{urgent.title}</h1>
           <p>{urgent.content}</p>
         </section>
@@ -98,59 +98,59 @@ export default function TV() {
   return (
     <main className="client-tv">
       <section className="client-tv-image-side">
-        <img src={buildingImage} className="client-tv-building" alt="בניין SYNQ" />
+        <img src={buildingImage} className="client-tv-building" alt="×‘× ×™×™×Ÿ SYNQ" />
 
         <section className="client-tv-feature-grid">
-          <Link to="/feature/events">📅<b>אירועים</b><small>(אופציונלי)</small></Link>
-          <Link to="/feature/personal">👤<b>איזור אישי</b><small>(אופציונלי)</small></Link>
-          <Link to="/feature/service">🔧<b>קריאת שירות</b><small>(אופציונלי)</small></Link>
-          <Link to="/feature/packages">📦<b>חבילות</b><small>(אופציונלי)</small></Link>
-          <Link to="/feature/maintenance">🧹<b>תחזוקה</b><small>(אופציונלי)</small></Link>
-          <Link to="/feature/reception">🛎️<b>דלפק קבלה</b><small>(אופציונלי)</small></Link>
+          <Link to="/feature/events">ðŸ“…<b>××™×¨×•×¢×™×</b><small>(××•×¤×¦×™×•× ×œ×™)</small></Link>
+          <Link to="/feature/personal">ðŸ‘¤<b>××™×–×•×¨ ××™×©×™</b><small>(××•×¤×¦×™×•× ×œ×™)</small></Link>
+          <Link to="/feature/service">ðŸ”§<b>×§×¨×™××ª ×©×™×¨×•×ª</b><small>(××•×¤×¦×™×•× ×œ×™)</small></Link>
+          <Link to="/feature/packages">ðŸ“¦<b>×—×‘×™×œ×•×ª</b><small>(××•×¤×¦×™×•× ×œ×™)</small></Link>
+          <Link to="/feature/maintenance">ðŸ§¹<b>×ª×—×–×•×§×”</b><small>(××•×¤×¦×™×•× ×œ×™)</small></Link>
+          <Link to="/feature/reception">ðŸ›Žï¸<b>×“×œ×¤×§ ×§×‘×œ×”</b><small>(××•×¤×¦×™×•× ×œ×™)</small></Link>
         </section>
       </section>
 
       <section className="client-tv-content-side">
         <section className={"client-tv-live-info clock-" + (settings.clock_position || "center")}>
           <div className="client-tv-live-row">
-            <span>🕒</span>
+            <span>ðŸ•’</span>
             <strong>{now.toLocaleTimeString("he-IL", { hour: "2-digit", minute: "2-digit" })}</strong>
           </div>
 
           <div className="client-tv-live-row">
-            <span>📅</span>
+            <span>ðŸ“…</span>
             <b>{now.toLocaleDateString("he-IL", { weekday: "long", day: "numeric", month: "long" })}</b>
           </div>
 
           <div className="client-tv-live-separator" />
 
           <div className="client-tv-live-row">
-            <span>🌤️</span>
-            <strong>{weather ? Math.round(Number(weather.temperature)) + "°" : "--"}</strong>
+            <span>ðŸŒ¤ï¸</span>
+            <strong>{weather ? Math.round(Number(weather.temperature)) + "Â°" : "--"}</strong>
           </div>
 
           <div className="client-tv-live-city">
-            {settings.weather_city || "חיפה"}
+            {settings.weather_city || "×—×™×¤×”"}
           </div>
         </section>
 
         <img src="/synq-logo.png" className="client-tv-logo" alt="SYNQ By Shbiro" />
 
         <section className="client-tv-welcome">
-          <h1>ברוכים הבאים</h1>
-          <h2>למעונות סטודנטים</h2>
+          <h1>×‘×¨×•×›×™× ×”×‘××™×</h1>
+          <h2>×œ×ž×¢×•× ×•×ª ×¡×˜×•×“× ×˜×™×</h2>
         </section>
 
         <section className="client-tv-notices">
           <header>
-            <span>🔔</span>
-            <strong>הודעות חשובות</strong>
+            <span>ðŸ””</span>
+            <strong>×”×•×“×¢×•×ª ×—×©×•×‘×•×ª</strong>
           </header>
 
           {visiblePosts.length > 0 ? (
             visiblePosts.map((post) => (
               <article key={post.id}>
-                <span>📌</span>
+                <span>ðŸ“Œ</span>
                 <div>
                   <h3>{post.title}</h3>
                   <p>{post.content}</p>
@@ -160,26 +160,26 @@ export default function TV() {
           ) : (
             <>
               <article>
-                <span>📅</span>
+                <span>ðŸ“…</span>
                 <div>
-                  <h3>מפגש דיירים</h3>
-                  <p>יום שלישי | 18:00 | חדר כנסים</p>
+                  <h3>×ž×¤×’×© ×“×™×™×¨×™×</h3>
+                  <p>×™×•× ×©×œ×™×©×™ | 18:00 | ×—×“×¨ ×›× ×¡×™×</p>
                 </div>
               </article>
 
               <article>
-                <span>📦</span>
+                <span>ðŸ“¦</span>
                 <div>
-                  <h3>חבילות בדלפק הקבלה</h3>
-                  <p>יש לאסוף בימים א׳ עד ה׳ בין 09:00-17:00</p>
+                  <h3>×—×‘×™×œ×•×ª ×‘×“×œ×¤×§ ×”×§×‘×œ×”</h3>
+                  <p>×™×© ×œ××¡×•×£ ×‘×™×ž×™× ××³ ×¢×“ ×”×³ ×‘×™×Ÿ 09:00-17:00</p>
                 </div>
               </article>
 
               <article>
-                <span>🧹</span>
+                <span>ðŸ§¹</span>
                 <div>
-                  <h3>תחזוקה שוטפת</h3>
-                  <p>ביום רביעי יבוצעו עבודות תחזוקה בבניין</p>
+                  <h3>×ª×—×–×•×§×” ×©×•×˜×¤×ª</h3>
+                  <p>×‘×™×•× ×¨×‘×™×¢×™ ×™×‘×•×¦×¢×• ×¢×‘×•×“×•×ª ×ª×—×–×•×§×” ×‘×‘× ×™×™×Ÿ</p>
                 </div>
               </article>
             </>
@@ -194,3 +194,4 @@ export default function TV() {
     </main>
   );
 }
+
