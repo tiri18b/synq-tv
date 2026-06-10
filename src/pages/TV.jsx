@@ -24,31 +24,25 @@ export default function TV() {
   const loadSettings = async () => {
     const { data } = await supabase.from("app_settings").select("*");
     const obj = {};
-    (data || []).forEach((row) => (obj[row.key] = row.value));
-    setSettings(obj);
-    loadWeather(obj.weather_lat, obj.weather_lon);
-  };
+    (data || []).forEach((row) => {
+      obj[row.key] = row.value;
+    });
 
-  const loadWeather = async (lat, lon) => {
-    if (!lat || !lon) return;
+    setSettings(obj);
+
+    const lat = obj.weather_lat || "32.7940";
+    const lon = obj.weather_lon || "34.9896";
 
     try {
-      const url =
+      const res = await fetch(
         "https://api.open-meteo.com/v1/forecast?latitude=" +
-        encodeURIComponent(lat) +
-        "&longitude=" +
-        encodeURIComponent(lon) +
-        "&current_weather=true&timezone=Asia%2FJerusalem";
-
-      const res = await fetch(url);
-      const data = await res.json();
-
-      if (data.current_weather) {
-        setWeather({
-          temperature: data.current_weather.temperature,
-          code: data.current_weather.weathercode,
-        });
-      }
+          lat +
+          "&longitude=" +
+          lon +
+          "&current_weather=true&timezone=Asia%2FJerusalem"
+      );
+      const json = await res.json();
+      setWeather(json.current_weather || null);
     } catch {
       setWeather(null);
     }
@@ -59,121 +53,119 @@ export default function TV() {
     loadSettings();
 
     const channel = supabase
-      .channel("synq-tv-live")
+      .channel("synq-tv")
       .on("postgres_changes", { event: "*", schema: "public", table: "posts" }, loadPosts)
       .on("postgres_changes", { event: "*", schema: "public", table: "app_settings" }, loadSettings)
       .subscribe();
 
-    const clock = setInterval(() => setNow(new Date()), 1000);
+    const timer = setInterval(() => setNow(new Date()), 1000);
 
     return () => {
-      clearInterval(clock);
+      clearInterval(timer);
       supabase.removeChannel(channel);
     };
   }, []);
 
   const urgent = useMemo(() => {
-    return posts.find((p) => {
-      if (p.type !== "urgent" || !p.urgent_until) return false;
-      return new Date(p.urgent_until).getTime() > now.getTime();
+    return posts.find((post) => {
+      if (post.type !== "urgent" || !post.urgent_until) return false;
+      return new Date(post.urgent_until).getTime() > now.getTime();
     });
   }, [posts, now]);
 
-  const importantPosts = posts.slice(0, 3);
+  const visiblePosts = posts.slice(0, 3);
 
   if (urgent) {
     return (
-      <div className="synq-showcase urgent-mode">
-        <img src="/synq-logo.png" className="showcase-logo" />
-        <div className="urgent-demo-card">
+      <main className="tv-page urgent-screen">
+        <img src="/synq-logo.png" className="tv-logo" />
+        <section className="urgent-card">
           <span>הודעה דחופה</span>
           <h1>{urgent.title}</h1>
           <p>{urgent.content}</p>
-        </div>
-      </div>
+        </section>
+      </main>
     );
   }
 
   return (
-    <div className="synq-showcase">
-      <section className="showcase-left">
-        <img src="/synq-logo.png" className="showcase-logo" />
+    <main className="tv-page">
+      <section className="tv-left">
+        <img src="/synq-logo.png" className="tv-logo" />
 
-        <div className="welcome-box">
+        <section className="welcome">
           <h1>ברוכים הבאים</h1>
-          <h2>למעונות הסטודנטים</h2>
-        </div>
+          <h2>למעונות סטודנטים</h2>
+        </section>
 
-        <div className="notice-box">
-          <div className="notice-title">הודעות חשובות <span>🔔</span></div>
+        <section className="notice-panel">
+          <header>
+            <strong>הודעות חשובות</strong>
+            <span>🔔</span>
+          </header>
 
-          {importantPosts.length ? (
-            importantPosts.map((post) => (
-              <div className="notice-item" key={post.id}>
-                <div className="notice-icon">📌</div>
+          {visiblePosts.length > 0 ? (
+            visiblePosts.map((post) => (
+              <article key={post.id} className="notice-row">
+                <span>📌</span>
                 <div>
-                  <strong>{post.title}</strong>
+                  <h3>{post.title}</h3>
                   <p>{post.content}</p>
                 </div>
-              </div>
+              </article>
             ))
           ) : (
             <>
-              <div className="notice-item">
-                <div className="notice-icon">📅</div>
+              <article className="notice-row">
+                <span>📅</span>
                 <div>
-                  <strong>מפגש דיירים</strong>
+                  <h3>מפגש דיירים</h3>
                   <p>יום שלישי | 18:00 | חדר כנסים</p>
                 </div>
-              </div>
-              <div className="notice-item">
-                <div className="notice-icon">📦</div>
+              </article>
+              <article className="notice-row">
+                <span>📦</span>
                 <div>
-                  <strong>חבילות בדלפק הקבלה</strong>
-                  <p>יש לאסוף בימים א׳-ה׳ בין 09:00-17:00</p>
+                  <h3>חבילות בדלפק הקבלה</h3>
+                  <p>יש לאסוף בימים א׳ עד ה׳ בין 09:00-17:00</p>
                 </div>
-              </div>
-              <div className="notice-item">
-                <div className="notice-icon">🧹</div>
+              </article>
+              <article className="notice-row">
+                <span>🧹</span>
                 <div>
-                  <strong>תחזוקה שוטפת</strong>
+                  <h3>תחזוקה שוטפת</h3>
                   <p>ביום רביעי יבוצעו עבודות תחזוקה בבניין</p>
                 </div>
-              </div>
+              </article>
             </>
           )}
-        </div>
+        </section>
       </section>
 
-      <section className="showcase-right">
-        <div className="top-info">
-          <div>
-            <strong>{now.toLocaleTimeString("he-IL", { hour: "2-digit", minute: "2-digit" })}</strong>
-            <span>{now.toLocaleDateString("he-IL", { weekday: "long", day: "numeric", month: "long" })}</span>
-          </div>
+      <section className="tv-right">
+        <img src="/building.jpeg" className="building-bg" />
 
-          <div>
-            <strong>{weather ? Math.round(Number(weather.temperature)) + "°" : "--"}</strong>
-            <span>{settings.weather_city || "תל אביב"}</span>
-          </div>
-        </div>
+        <section className="weather-clock">
+          <strong>{now.toLocaleTimeString("he-IL", { hour: "2-digit", minute: "2-digit" })}</strong>
+          <span>{now.toLocaleDateString("he-IL", { weekday: "long", day: "numeric", month: "long" })}</span>
+          <strong>{weather ? Math.round(Number(weather.temperature)) + "°" : "--"}</strong>
+          <span>{settings.weather_city || "חיפה"}</span>
+        </section>
 
-        <img src="/building.jpeg" className="building-image" />
-
-        <div className="tiles-row">
-          <Link to="/feature/events" className="feature-tile">📅<span>אירועים</span><small>(אופציונלי)</small></Link>
-          <Link to="/feature/personal" className="feature-tile">👤<span>איזור אישי</span><small>(אופציונלי)</small></Link>
-          <Link to="/feature/service" className="feature-tile">🔧<span>קריאת שירות</span><small>(אופציונלי)</small></Link>
-          <Link to="/feature/packages" className="feature-tile">📦<span>חבילות</span><small>(אופציונלי)</small></Link>
-          <Link to="/feature/maintenance" className="feature-tile">🧹<span>תחזוקה</span><small>(אופציונלי)</small></Link>
-          <Link to="/feature/reception" className="feature-tile">🛎️<span>דלפק קבלה</span><small>(אופציונלי)</small></Link>
-        </div>
+        <section className="feature-grid">
+          <Link to="/feature/events">📅<b>אירועים</b><small>(אופציונלי)</small></Link>
+          <Link to="/feature/personal">👤<b>איזור אישי</b><small>(אופציונלי)</small></Link>
+          <Link to="/feature/service">🔧<b>קריאת שירות</b><small>(אופציונלי)</small></Link>
+          <Link to="/feature/packages">📦<b>חבילות</b><small>(אופציונלי)</small></Link>
+          <Link to="/feature/maintenance">🧹<b>תחזוקה</b><small>(אופציונלי)</small></Link>
+          <Link to="/feature/reception">🛎️<b>דלפק קבלה</b><small>(אופציונלי)</small></Link>
+        </section>
       </section>
 
-      <footer className="showcase-ticker">
+      <footer className="ticker">
         <b>{now.toLocaleTimeString("he-IL", { hour: "2-digit", minute: "2-digit" })}</b>
         <marquee>{tickerText}</marquee>
       </footer>
-    </div>
+    </main>
   );
 }
