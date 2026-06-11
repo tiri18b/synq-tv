@@ -1,8 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { supabase } from "../lib/supabase";
-
-const הענן = supabase;
 import buildingImage from "../assets/building.jpeg";
 import "./FeaturePage.css";
 

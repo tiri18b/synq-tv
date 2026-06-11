@@ -1,8 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { supabase } from "../lib/supabase";
-
-const הענן = supabase;
 import buildingImage from "../assets/building.jpeg";
 import "./TV.css";
 

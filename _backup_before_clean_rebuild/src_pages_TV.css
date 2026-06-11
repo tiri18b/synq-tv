@@ -1,0 +1,1281 @@
+html,
+body,
+#root {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+}
+
+.client-tv {
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  direction: ltr;
+  display: grid;
+  grid-template-columns: 58% 42%;
+  background: #fbf7ff;
+  color: #241b35;
+  position: relative;
+  font-family: Assistant, Arial, sans-serif;
+}
+
+.client-tv-image-side {
+  position: relative;
+  height: 100vh;
+  overflow: hidden;
+  z-index: 1;
+}
+
+.client-tv-building {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 80vh;
+  object-fit: cover;
+  object-position: center left;
+  z-index: 1;
+}
+
+.client-tv-image-side::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  background:
+    linear-gradient(to left, #fbf7ff 0%, rgba(251,247,255,.9) 10%, rgba(251,247,255,.48) 28%, rgba(251,247,255,.08) 48%, transparent 70%),
+    linear-gradient(to bottom, transparent 0%, transparent 60%, rgba(251,247,255,.78) 76%, #fbf7ff 100%);
+}
+
+.client-tv-content-side {
+  height: 100vh;
+  position: relative;
+  z-index: 6;
+  direction: rtl;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 5vh 3.4vw 10vh;
+}
+
+.client-tv-logo {
+  width: clamp(210px, 17vw, 340px);
+  height: auto;
+  object-fit: contain;
+  margin-bottom: 4vh;
+}
+
+.client-tv-welcome {
+  text-align: center;
+  margin-bottom: 4vh;
+}
+
+.client-tv-welcome h1 {
+  margin: 0;
+  color: #6d3caf;
+  font-size: clamp(44px, 4vw, 78px);
+  line-height: 1;
+  font-weight: 900;
+}
+
+.client-tv-welcome h2 {
+  margin: 1vh 0 0;
+  color: #241b35;
+  font-size: clamp(28px, 2.35vw, 46px);
+  line-height: 1.1;
+  font-weight: 900;
+}
+
+.client-tv-notices {
+  width: 92%;
+  max-height: 36vh;
+  overflow: hidden;
+  border-radius: 22px;
+  background: rgba(255,255,255,.96);
+  box-shadow: 0 20px 50px rgba(95,53,145,.15);
+}
+
+.client-tv-notices header {
+  background: linear-gradient(135deg, #7e4bb5, #a476cf);
+  color: white;
+  padding: 1.2vh 1.8vw;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: clamp(20px, 1.45vw, 30px);
+  font-weight: 900;
+}
+
+.client-tv-notices article {
+  display: grid;
+  grid-template-columns: 54px 1fr;
+  align-items: center;
+  gap: 12px;
+  padding: 1.05vh 1.7vw;
+  border-bottom: 1px solid #eadcf7;
+}
+
+.client-tv-notices article > span {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: #eadcf7;
+  font-size: 22px;
+}
+
+.client-tv-notices h3 {
+  margin: 0;
+  font-size: clamp(17px, 1.12vw, 23px);
+  font-weight: 900;
+}
+
+.client-tv-notices p {
+  margin: .35vh 0 0;
+  font-size: clamp(13px, .86vw, 18px);
+  font-weight: 700;
+}
+
+.client-tv-live-info {
+  position: absolute;
+  top: 5vh;
+  left: -5.2vw;
+  z-index: 30;
+  min-width: 220px;
+  direction: rtl;
+  text-align: right;
+  color: #4c267f;
+}
+
+.client-tv-live-row {
+  display: grid;
+  grid-template-columns: 42px 1fr;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 1vh;
+}
+
+.client-tv-live-row span {
+  font-size: clamp(24px, 1.9vw, 36px);
+}
+
+.client-tv-live-row strong {
+  font-size: clamp(32px, 3vw, 56px);
+  line-height: 1;
+  font-weight: 900;
+}
+
+.client-tv-live-row b {
+  font-size: clamp(15px, 1.05vw, 22px);
+  color: #241b35;
+  font-weight: 900;
+}
+
+.client-tv-live-separator {
+  height: 2px;
+  background: rgba(126,75,181,.22);
+  margin: 2vh 0;
+}
+
+.client-tv-live-city {
+  padding-right: 52px;
+  color: #241b35;
+  font-size: clamp(15px, 1.05vw, 22px);
+  font-weight: 900;
+}
+
+.client-tv-feature-grid {
+  position: absolute;
+  left: 3vw;
+  right: 5vw;
+  bottom: 10vh;
+  z-index: 10;
+  direction: rtl;
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 1vw;
+}
+
+.client-tv-feature-grid a {
+  height: 15.5vh;
+  min-height: 108px;
+  max-height: 150px;
+  border-radius: 20px;
+  background: rgba(255,255,255,.94);
+  display: grid;
+  place-items: center;
+  text-align: center;
+  text-decoration: none;
+  color: #241b35;
+  box-shadow: 0 16px 34px rgba(95,53,145,.16);
+  font-size: clamp(28px, 2.3vw, 42px);
+}
+
+.client-tv-feature-grid b {
+  display: block;
+  font-size: clamp(14px, .98vw, 20px);
+  font-weight: 900;
+}
+
+.client-tv-feature-grid small {
+  display: block;
+  font-size: clamp(11px, .75vw, 15px);
+  font-weight: 800;
+}
+
+.client-tv-ticker {
+  position: absolute;
+  left: 3vw;
+  right: 3vw;
+  bottom: 2vh;
+  height: 6vh;
+  min-height: 48px;
+  z-index: 50;
+  display: grid;
+  grid-template-columns: 1fr 120px;
+  align-items: center;
+  overflow: hidden;
+  border-radius: 18px;
+  background: rgba(235,222,249,.94);
+  box-shadow: 0 10px 32px rgba(95,53,145,.15);
+  direction: rtl;
+}
+
+.client-tv-ticker marquee {
+  color: #5b3199;
+  font-size: clamp(17px, 1.32vw, 26px);
+  font-weight: 900;
+  padding: 0 2vw;
+}
+
+.client-tv-ticker b {
+  height: 100%;
+  background: #7e4bb5;
+  color: white;
+  display: grid;
+  place-items: center;
+  font-size: clamp(18px, 1.5vw, 30px);
+}
+
+.client-tv-urgent {
+  display: grid;
+  place-items: center;
+  background: #fbf7ff;
+  direction: rtl;
+}
+
+.client-tv-urgent-logo {
+  position: absolute;
+  top: 5vh;
+  right: 5vw;
+  width: 260px;
+}
+
+.client-tv-urgent-card {
+  width: min(900px, 70vw);
+  background: white;
+  border-radius: 32px;
+  padding: 6vh 6vw;
+  text-align: center;
+  box-shadow: 0 30px 80px rgba(95,53,145,.25);
+}
+
+.client-tv-urgent-card span {
+  color: #7e4bb5;
+  font-size: 28px;
+  font-weight: 900;
+}
+
+.client-tv-urgent-card h1 {
+  font-size: clamp(52px, 5vw, 90px);
+  color: #6d3caf;
+}
+
+.client-tv-urgent-card p {
+  font-size: 28px;
+}
+
+@media (max-height: 800px) {
+  .client-tv-content-side {
+    padding-top: 4vh;
+  }
+
+  .client-tv-logo {
+    width: clamp(190px, 15vw, 300px);
+    margin-bottom: 3vh;
+  }
+
+  .client-tv-welcome {
+    margin-bottom: 3vh;
+  }
+
+  .client-tv-notices {
+    max-height: 34vh;
+  }
+
+  .client-tv-feature-grid a {
+    height: 14.5vh;
+    min-height: 98px;
+  }
+}
+
+
+/* TV NOTICE SLIDES */
+.client-tv-notices {
+  display: none !important;
+}
+
+.client-tv-notice-slide {
+  width: 92%;
+  min-height: 29vh;
+  max-height: 36vh;
+  overflow: hidden;
+  border-radius: 24px;
+  background: rgba(255,255,255,.96);
+  box-shadow: 0 20px 50px rgba(95,53,145,.15);
+  direction: rtl;
+}
+
+.client-tv-notice-slide header {
+  background: linear-gradient(135deg, #7e4bb5, #a476cf);
+  color: white;
+  padding: 1.3vh 1.8vw;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: clamp(20px, 1.45vw, 30px);
+  font-weight: 900;
+}
+
+.client-tv-notice-slide article {
+  min-height: 18vh;
+  padding: 2.4vh 2vw;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  animation: synqSlideIn .42s ease both;
+}
+
+.client-tv-notice-slide h3 {
+  margin: 0 0 1.1vh;
+  color: #5b3199;
+  font-size: clamp(30px, 2.45vw, 52px);
+  line-height: 1.1;
+  font-weight: 900;
+}
+
+.client-tv-notice-slide p {
+  margin: 0;
+  color: #241b35;
+  font-size: clamp(20px, 1.45vw, 30px);
+  line-height: 1.55;
+  font-weight: 800;
+}
+
+.client-tv-notice-slide footer {
+  height: 4.2vh;
+  min-height: 34px;
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  align-items: center;
+  border-top: 1px solid #eadcf7;
+}
+
+.client-tv-notice-slide footer span {
+  width: 12px;
+  height: 12px;
+  border-radius: 999px;
+  background: #d9c3f3;
+  opacity: .65;
+}
+
+.client-tv-notice-slide footer span.active {
+  width: 34px;
+  opacity: 1;
+  background: #7e4bb5;
+}
+
+.client-tv-notice-slide.urgent-slide {
+  box-shadow: 0 24px 70px rgba(190,18,60,.22);
+}
+
+.client-tv-notice-slide.urgent-slide header {
+  background: linear-gradient(135deg, #be123c, #fb7185);
+}
+
+.client-tv-notice-slide.urgent-slide h3 {
+  color: #be123c;
+}
+
+@keyframes synqSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+
+/* TV THREE MESSAGES STACK WITH READ BUTTON */
+.client-tv-notices,
+.client-tv-notice-slide {
+  display: none !important;
+}
+
+.client-tv-message-stack {
+  width: 94%;
+  min-height: 36vh;
+  max-height: 40vh;
+  overflow: hidden;
+  border-radius: 24px;
+  background: rgba(255,255,255,.96);
+  box-shadow: 0 20px 50px rgba(95,53,145,.15);
+  direction: rtl;
+}
+
+.client-tv-message-stack header {
+  background: linear-gradient(135deg, #7e4bb5, #a476cf);
+  color: white;
+  padding: 1.1vh 1.7vw;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: clamp(19px, 1.32vw, 28px);
+  font-weight: 900;
+}
+
+.client-tv-message-list {
+  display: grid;
+  gap: .7vh;
+  padding: 1.1vh 1.1vw;
+  min-height: 26vh;
+}
+
+.client-tv-message-list article {
+  display: grid;
+  grid-template-columns: 48px 1fr 88px;
+  gap: 12px;
+  align-items: center;
+  min-height: 7.7vh;
+  padding: .85vh .85vw;
+  border-radius: 18px;
+  background: #fbf8ff;
+  border: 1px solid #eadcf7;
+  animation: synqSlideIn .42s ease both;
+}
+
+.client-tv-message-list article.urgent-message {
+  background: #fff1f2;
+  border-color: rgba(190,18,60,.32);
+  box-shadow: 0 12px 34px rgba(190,18,60,.12);
+}
+
+.client-tv-message-list article.first-message {
+  order: -1;
+}
+
+.message-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+  background: #eadcf7;
+  font-size: 22px;
+}
+
+.urgent-message .message-icon {
+  background: #fecdd3;
+}
+
+.message-content h3 {
+  margin: 0 0 .35vh;
+  color: #5b3199;
+  font-size: clamp(18px, 1.25vw, 26px);
+  line-height: 1.1;
+  font-weight: 900;
+}
+
+.urgent-message .message-content h3 {
+  color: #be123c;
+}
+
+.message-content p {
+  margin: 0;
+  color: #241b35;
+  font-size: clamp(13px, .9vw, 18px);
+  line-height: 1.35;
+  font-weight: 800;
+}
+
+.client-tv-message-list button {
+  border: none;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #7e4bb5, #a476cf);
+  color: white;
+  padding: 11px 10px;
+  font-weight: 900;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+.urgent-message button {
+  background: linear-gradient(135deg, #be123c, #fb7185);
+}
+
+.client-tv-message-stack footer {
+  height: 3.7vh;
+  min-height: 30px;
+  display: flex;
+  gap: 9px;
+  justify-content: center;
+  align-items: center;
+  border-top: 1px solid #eadcf7;
+}
+
+.client-tv-message-stack footer span {
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  background: #d9c3f3;
+  opacity: .65;
+}
+
+.client-tv-message-stack footer span.active {
+  width: 30px;
+  opacity: 1;
+  background: #7e4bb5;
+}
+
+@media (max-height: 800px) {
+  .client-tv-message-stack {
+    min-height: 34vh;
+    max-height: 38vh;
+  }
+
+  .client-tv-message-list article {
+    min-height: 7.1vh;
+  }
+
+  .message-content h3 {
+    font-size: clamp(16px, 1.12vw, 23px);
+  }
+
+  .message-content p {
+    font-size: clamp(12px, .82vw, 16px);
+  }
+}
+
+
+/* PINNED MODULE MESSAGES AND ADMIN TOGGLES */
+.pinned-settings {
+  display: grid;
+  gap: 12px;
+  background: #fbf8ff;
+  border: 1px solid #eadcf7;
+  border-radius: 18px;
+  padding: 16px;
+}
+
+.pinned-settings h3 {
+  margin: 0;
+  color: #5b3199;
+}
+
+.pinned-settings p {
+  margin: 0;
+  line-height: 1.6;
+  font-weight: 800;
+}
+
+.pinned-toggle-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 11px;
+}
+
+.pinned-toggle-grid label {
+  display: grid;
+  grid-template-columns: 22px 34px 1fr;
+  align-items: center;
+  gap: 8px;
+  background: white;
+  border: 1px solid #eadcf7;
+  border-radius: 14px;
+  padding: 12px;
+  cursor: pointer;
+  font-weight: 900;
+}
+
+.pinned-toggle-grid label.enabled {
+  background: #f3eafd;
+  border-color: #c9a9ed;
+}
+
+.client-tv-message-list article.pinned-message {
+  background: #f7f0ff;
+  border-color: rgba(126,75,181,.26);
+}
+
+.client-tv-message-list article.regular-message {
+  background: #fbf8ff;
+  border-color: #eadcf7;
+}
+
+.client-tv-message-list article.urgent-message {
+  background: #fff1f2;
+  border-color: rgba(190,18,60,.32);
+  box-shadow: 0 12px 34px rgba(190,18,60,.12);
+}
+
+.pinned-message .message-icon {
+  background: #eadcf7;
+}
+
+.regular-message .message-icon {
+  background: #eef2ff;
+}
+
+.client-tv-message-list article:not(.urgent-message) {
+  grid-template-columns: 48px 1fr 0 !important;
+}
+
+.client-tv-message-list article:not(.urgent-message) button {
+  display: none !important;
+}
+
+@media (max-width: 1200px) {
+  .pinned-toggle-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+
+/* TV APK NO SCROLL SAFE AREA */
+.client-tv {
+  width: 100vw !important;
+  height: 100vh !important;
+  max-width: 100vw !important;
+  max-height: 100vh !important;
+  overflow: hidden !important;
+}
+
+.client-tv-image-side,
+.client-tv-content-side {
+  height: 100vh !important;
+  max-height: 100vh !important;
+  overflow: hidden !important;
+}
+
+.client-tv-message-stack {
+  max-height: 39vh !important;
+}
+
+.client-tv-feature-grid {
+  bottom: 9.2vh !important;
+}
+
+.client-tv-ticker {
+  bottom: 1.5vh !important;
+}
+
+@media (max-width: 1100px) {
+  .client-tv {
+    grid-template-columns: 56% 44% !important;
+  }
+
+  .client-tv-content-side {
+    padding-left: 2vw !important;
+    padding-right: 2vw !important;
+  }
+
+  .client-tv-logo {
+    width: clamp(170px, 15vw, 280px) !important;
+  }
+
+  .client-tv-welcome h1 {
+    font-size: clamp(34px, 3.4vw, 62px) !important;
+  }
+
+  .client-tv-welcome h2 {
+    font-size: clamp(24px, 2.1vw, 40px) !important;
+  }
+
+  .client-tv-message-list article {
+    grid-template-columns: 42px 1fr 80px !important;
+    gap: 8px !important;
+  }
+}
+
+
+/* TV OLD HOME BUTTON */
+.client-tv-home-button {
+  position: fixed;
+  left: 1.3vw;
+  top: 1.5vh;
+  z-index: 9999;
+  border: none;
+  border-radius: 999px;
+  background: rgba(33, 22, 51, .72);
+  color: white;
+  padding: 10px 18px;
+  font-family: Assistant, Arial, sans-serif;
+  font-weight: 900;
+  font-size: 15px;
+  cursor: pointer;
+  backdrop-filter: blur(8px);
+  opacity: .78;
+}
+
+.client-tv-home-button:hover,
+.client-tv-home-button:focus {
+  opacity: 1;
+  outline: 3px solid rgba(126, 75, 181, .35);
+}
+
+@media (max-width: 1100px) {
+  .client-tv-home-button {
+    font-size: 13px;
+    padding: 9px 14px;
+  }
+}
+
+
+/* MOVE APPS BUTTON TO FAR RIGHT */
+.client-tv-home-button {
+  left: auto !important;
+  right: 1.3vw !important;
+  top: 1.5vh !important;
+}
+
+
+/* FIX BOTTOM TICKER TOUCHING MENU */
+.client-tv-feature-grid {
+  bottom: 12vh !important;
+}
+
+.client-tv-ticker {
+  bottom: 1.1vh !important;
+  height: 5.2vh !important;
+  min-height: 42px !important;
+}
+
+.client-tv-ticker marquee {
+  font-size: clamp(15px, 1.15vw, 22px) !important;
+}
+
+.client-tv-ticker b {
+  font-size: clamp(16px, 1.25vw, 24px) !important;
+}
+
+
+/* FIX TV MESSAGES PANEL CUTTING AT BOTTOM */
+.client-tv-content-side {
+  padding-top: 4vh !important;
+  padding-bottom: 8.5vh !important;
+  gap: 0 !important;
+}
+
+.client-tv-logo {
+  margin-bottom: 2.2vh !important;
+}
+
+.client-tv-welcome {
+  margin-bottom: 2.3vh !important;
+}
+
+.client-tv-message-stack {
+  width: 94% !important;
+  min-height: 30vh !important;
+  max-height: 33.5vh !important;
+  overflow: hidden !important;
+}
+
+.client-tv-message-stack header {
+  padding: .85vh 1.5vw !important;
+}
+
+.client-tv-message-list {
+  min-height: 21vh !important;
+  padding: .75vh .9vw !important;
+  gap: .45vh !important;
+}
+
+.client-tv-message-list article {
+  min-height: 6.35vh !important;
+  padding: .55vh .75vw !important;
+}
+
+.message-icon {
+  width: 38px !important;
+  height: 38px !important;
+  font-size: 20px !important;
+}
+
+.message-content h3 {
+  font-size: clamp(16px, 1.08vw, 23px) !important;
+  margin-bottom: .25vh !important;
+}
+
+.message-content p {
+  font-size: clamp(12px, .78vw, 16px) !important;
+  line-height: 1.25 !important;
+}
+
+.client-tv-message-list button {
+  padding: 8px 8px !important;
+  font-size: 13px !important;
+}
+
+.client-tv-message-stack footer {
+  height: 2.8vh !important;
+  min-height: 24px !important;
+}
+
+.client-tv-message-stack footer span {
+  width: 8px !important;
+  height: 8px !important;
+}
+
+.client-tv-message-stack footer span.active {
+  width: 24px !important;
+}
+
+@media (max-height: 800px) {
+  .client-tv-content-side {
+    padding-top: 3vh !important;
+    padding-bottom: 8vh !important;
+  }
+
+  .client-tv-logo {
+    width: clamp(155px, 13vw, 245px) !important;
+    margin-bottom: 1.6vh !important;
+  }
+
+  .client-tv-welcome {
+    margin-bottom: 1.6vh !important;
+  }
+
+  .client-tv-message-stack {
+    min-height: 28.5vh !important;
+    max-height: 31.5vh !important;
+  }
+
+  .client-tv-message-list {
+    min-height: 19.5vh !important;
+  }
+
+  .client-tv-message-list article {
+    min-height: 5.9vh !important;
+  }
+}
+
+
+/* TV PROJECTOR SAFE AREA FOR HY320 AND OLDER STREAMERS */
+.client-tv {
+  padding: 1.2vh 1.2vw 2.4vh 1.2vw !important;
+  box-sizing: border-box !important;
+}
+
+.client-tv-image-side,
+.client-tv-content-side {
+  border-radius: 0 !important;
+}
+
+.client-tv-content-side {
+  padding-top: 3.2vh !important;
+  padding-bottom: 11vh !important;
+}
+
+.client-tv-logo {
+  width: clamp(165px, 13.5vw, 270px) !important;
+  margin-bottom: 1.5vh !important;
+}
+
+.client-tv-welcome {
+  margin-bottom: 1.5vh !important;
+}
+
+.client-tv-welcome h1 {
+  font-size: clamp(34px, 3.4vw, 64px) !important;
+}
+
+.client-tv-welcome h2 {
+  font-size: clamp(23px, 2vw, 38px) !important;
+}
+
+.client-tv-message-stack {
+  min-height: 27vh !important;
+  max-height: 30.5vh !important;
+}
+
+.client-tv-message-list {
+  min-height: 18.5vh !important;
+}
+
+.client-tv-message-list article {
+  min-height: 5.65vh !important;
+}
+
+.client-tv-feature-grid {
+  bottom: 13.8vh !important;
+}
+
+.client-tv-feature-grid a {
+  height: 13.8vh !important;
+  min-height: 88px !important;
+  max-height: 130px !important;
+}
+
+.client-tv-ticker {
+  left: 4vw !important;
+  right: 4vw !important;
+  bottom: 2.7vh !important;
+  height: 4.8vh !important;
+  min-height: 38px !important;
+}
+
+.client-tv-ticker marquee {
+  font-size: clamp(13px, 1vw, 19px) !important;
+}
+
+.client-tv-ticker b {
+  font-size: clamp(14px, 1.1vw, 21px) !important;
+}
+
+.client-tv-home-button {
+  right: 2.4vw !important;
+  top: 2.4vh !important;
+}
+
+
+/* RESTORE TV LAYOUT AFTER HY320 SAFE AREA TEST */
+.client-tv {
+  padding: 0 !important;
+  box-sizing: border-box !important;
+}
+
+.client-tv-content-side {
+  padding-top: 4vh !important;
+  padding-bottom: 8.5vh !important;
+}
+
+.client-tv-logo {
+  width: clamp(185px, 15vw, 300px) !important;
+  margin-bottom: 2.2vh !important;
+}
+
+.client-tv-welcome {
+  margin-bottom: 2.3vh !important;
+}
+
+.client-tv-welcome h1 {
+  font-size: clamp(44px, 4vw, 78px) !important;
+}
+
+.client-tv-welcome h2 {
+  font-size: clamp(28px, 2.35vw, 46px) !important;
+}
+
+.client-tv-message-stack {
+  min-height: 30vh !important;
+  max-height: 33.5vh !important;
+}
+
+.client-tv-message-list {
+  min-height: 21vh !important;
+}
+
+.client-tv-message-list article {
+  min-height: 6.35vh !important;
+}
+
+.client-tv-feature-grid {
+  bottom: 12vh !important;
+}
+
+.client-tv-feature-grid a {
+  height: 15.5vh !important;
+  min-height: 108px !important;
+  max-height: 150px !important;
+}
+
+.client-tv-ticker {
+  left: 3vw !important;
+  right: 3vw !important;
+  bottom: 1.1vh !important;
+  height: 5.2vh !important;
+  min-height: 42px !important;
+}
+
+.client-tv-home-button {
+  right: 1.3vw !important;
+  top: 1.5vh !important;
+}
+
+
+/* ROOM BASED TV CALIBRATION */
+.client-tv-shell {
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  background: #fbf7ff;
+  position: relative;
+}
+
+.client-tv-stage {
+  width: 100vw;
+  height: 100vh;
+  transform: translate(var(--tv-x, 0px), var(--tv-y, 0px)) scale(var(--tv-scale, 1));
+  transform-origin: center center;
+  overflow: hidden;
+  will-change: transform;
+}
+
+.client-tv-ticker {
+  bottom: calc(1.1vh + var(--tv-bottom-safe, 0px)) !important;
+}
+
+.client-tv-feature-grid {
+  bottom: calc(12vh + var(--tv-bottom-safe, 0px)) !important;
+}
+
+.client-tv-calibration-button {
+  position: fixed;
+  right: 1.3vw;
+  top: 6.3vh;
+  z-index: 9999;
+  border: none;
+  border-radius: 999px;
+  background: rgba(33, 22, 51, .18);
+  color: rgba(255,255,255,.55);
+  padding: 8px 14px;
+  font-family: Assistant, Arial, sans-serif;
+  font-weight: 900;
+  font-size: 13px;
+  cursor: pointer;
+  backdrop-filter: blur(8px);
+  opacity: .18;
+  transition: opacity .2s ease, background .2s ease;
+}
+
+.client-tv-calibration-button:hover,
+.client-tv-calibration-button:focus {
+  opacity: 1;
+  color: white;
+  background: rgba(33, 22, 51, .78);
+  outline: 3px solid rgba(126, 75, 181, .35);
+}
+
+.client-tv-room-badge {
+  position: fixed;
+  right: 1.4vw;
+  top: 10.2vh;
+  z-index: 9999;
+  padding: 5px 10px;
+  border-radius: 999px;
+  background: rgba(255,255,255,.5);
+  color: rgba(33,22,51,.55);
+  font-size: 11px;
+  font-weight: 900;
+  opacity: .12;
+  pointer-events: none;
+}
+
+.client-tv-shell:hover .client-tv-room-badge,
+.client-tv-shell:focus-within .client-tv-room-badge {
+  opacity: .8;
+}
+
+/* ADMIN ROOM CALIBRATION */
+.screen-calibration-card {
+  display: grid;
+  gap: 14px;
+  background: #fbf8ff;
+  border: 1px solid #eadcf7;
+  border-radius: 18px;
+  padding: 16px;
+}
+
+.screen-calibration-card h3 {
+  margin: 0;
+  color: #5b3199;
+}
+
+.screen-calibration-card p {
+  margin: 0;
+  line-height: 1.6;
+  font-weight: 800;
+}
+
+.calibration-room-row {
+  display: grid;
+  grid-template-columns: 1fr 150px;
+  gap: 12px;
+  align-items: end;
+}
+
+.calibration-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 11px;
+}
+
+.calibration-grid label,
+.calibration-room-row label {
+  display: grid;
+  gap: 7px;
+  font-weight: 900;
+  color: #4c267f;
+}
+
+.calibration-grid span {
+  color: #6b5f78;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.calibration-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+@media (max-width: 1200px) {
+  .calibration-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .calibration-room-row,
+  .calibration-actions {
+    grid-template-columns: 1fr;
+  }
+}
+
+
+/* CANCEL TV CALIBRATION AND SET MESSAGE CAROUSEL TO 2 ITEMS */
+.client-tv-shell,
+.client-tv-stage {
+  width: 100vw !important;
+  height: 100vh !important;
+  transform: none !important;
+  overflow: hidden !important;
+}
+
+.client-tv-calibration-button,
+.client-tv-room-badge {
+  display: none !important;
+}
+
+.client-tv-message-stack {
+  min-height: 28vh !important;
+  max-height: 31vh !important;
+  overflow: hidden !important;
+}
+
+.client-tv-message-list {
+  min-height: 18vh !important;
+  padding: .8vh .9vw !important;
+  gap: .75vh !important;
+}
+
+.client-tv-message-list article {
+  min-height: 7.4vh !important;
+  max-height: 8.6vh !important;
+  padding: .7vh .8vw !important;
+}
+
+.message-icon {
+  width: 40px !important;
+  height: 40px !important;
+  font-size: 21px !important;
+}
+
+.message-content h3 {
+  margin: 0 0 .25vh !important;
+  font-size: clamp(17px, 1.15vw, 24px) !important;
+  line-height: 1.05 !important;
+}
+
+.message-content p {
+  margin: 0 !important;
+  font-size: clamp(12px, .82vw, 17px) !important;
+  line-height: 1.22 !important;
+  display: -webkit-box !important;
+  -webkit-line-clamp: 2 !important;
+  -webkit-box-orient: vertical !important;
+  overflow: hidden !important;
+}
+
+.client-tv-message-stack footer {
+  height: 2.6vh !important;
+  min-height: 22px !important;
+}
+
+.client-tv-feature-grid {
+  bottom: 12vh !important;
+}
+
+.client-tv-ticker {
+  bottom: 1.1vh !important;
+}
+
+
+/* RESTORE CLEAN TV MESSAGES, 3 PER SLIDE */
+.client-tv-calibration-button,
+.client-tv-room-badge {
+  display: none !important;
+}
+
+.client-tv {
+  padding: 0 !important;
+}
+
+.client-tv-message-stack {
+  min-height: 30vh !important;
+  max-height: 33.5vh !important;
+  overflow: hidden !important;
+}
+
+.client-tv-message-list {
+  min-height: 21vh !important;
+  padding: .75vh .9vw !important;
+  gap: .45vh !important;
+}
+
+.client-tv-message-list article {
+  min-height: 6.35vh !important;
+  max-height: 7.1vh !important;
+  padding: .55vh .75vw !important;
+}
+
+.message-content p {
+  display: -webkit-box !important;
+  -webkit-line-clamp: 1 !important;
+  -webkit-box-orient: vertical !important;
+  overflow: hidden !important;
+}
+
+.client-tv-feature-grid {
+  bottom: 12vh !important;
+}
+
+.client-tv-ticker {
+  bottom: 1.1vh !important;
+}
+
+
+/* REMOVE ADMIN CALIBRATION UI */
+.screen-calibration-card,
+.calibration-room-row,
+.calibration-grid,
+.calibration-actions {
+  display: none !important;
+}

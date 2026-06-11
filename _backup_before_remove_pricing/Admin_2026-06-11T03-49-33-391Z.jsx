@@ -504,7 +504,36 @@ export default function Admin() {
                 </p>
               </article>
             </section>
-<section className="overview-navigation-callout">
+
+            <section className="overview-pricing-panel">
+              <h3>תמחור מומלץ לפרויקט</h3>
+
+              <div className="pricing-cards">
+                <article>
+                  <span>הקמה חד פעמית</span>
+                  <b>₪3,500</b>
+                  <p>עיצוב מערכת, מסך TV, דף ניהול, חיבור לענן, הגדרות ראשוניות והכנת סביבת עבודה.</p>
+                </article>
+
+                <article>
+                  <span>תחזוקה חודשית</span>
+                  <b>₪350</b>
+                  <p>אחסון, שרת ענן, עדכונים, גיבוי, תמיכה, שיפורים קטנים ושמירה על פעילות שוטפת.</p>
+                </article>
+
+                <article>
+                  <span>מודולים מתקדמים</span>
+                  <b>לפי דרישה</b>
+                  <p>חבילות, קריאות שירות, איזור אישי, אירועים, דוחות, הרשאות וניהול דיירים מתקדם.</p>
+                </article>
+              </div>
+
+              <p className="pricing-note">
+                המחיר מאפשר להתחיל מהר עם מערכת יציבה ומרשימה, ובהמשך להוסיף יכולות לפי הצורך של הלקוח והבניין.
+              </p>
+            </section>
+
+            <section className="overview-navigation-callout">
               <b>לחוויה המושלמת</b>
               <p>
                 מומלץ להשתמש במקשי הניווט של השלט כדי לעבור בין אזורי המערכת, לפתוח דפי דוגמה,
