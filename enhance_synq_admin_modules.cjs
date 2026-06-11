@@ -1,4 +1,6 @@
-import { useEffect, useState } from "react";
+const fs = require("fs");
+
+const admin = `import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "../lib/supabase";
 
@@ -362,3 +364,184 @@ export default function Admin() {
     </main>
   );
 }
+`;
+
+fs.writeFileSync("src/pages/Admin.jsx", admin, "utf8");
+
+let css = fs.readFileSync("src/App.css", "utf8");
+
+css += `
+
+/* ENHANCED ADMIN MODULE PAGES */
+.admin-helper {
+  background: #fbf8ff;
+  border: 1px solid #eadcf7;
+  color: #4c267f;
+  padding: 14px;
+  border-radius: 14px;
+  font-weight: 800;
+  line-height: 1.6;
+}
+
+.dashboard-intro p {
+  font-size: 16px;
+  line-height: 1.7;
+  font-weight: 700;
+}
+
+.dashboard-pitches {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+}
+
+.dashboard-pitches article {
+  background: #fbf8ff;
+  border: 1px solid #eadcf7;
+  border-radius: 16px;
+  padding: 16px;
+  display: grid;
+  gap: 8px;
+}
+
+.dashboard-pitches b {
+  color: #6d3caf;
+  font-size: 18px;
+}
+
+.module-showcase {
+  gap: 20px !important;
+}
+
+.module-hero {
+  display: grid;
+  grid-template-columns: 1fr 230px;
+  gap: 20px;
+  align-items: stretch;
+  background: linear-gradient(135deg, #fbf8ff, #f0e4fb);
+  border: 1px solid #eadcf7;
+  border-radius: 22px;
+  padding: 22px;
+}
+
+.module-hero h2 {
+  margin: 0 0 8px;
+  color: #5b3199;
+  font-size: 34px;
+}
+
+.module-hero p {
+  margin: 0 0 12px;
+  color: #241b35;
+  font-size: 18px;
+  font-weight: 800;
+  line-height: 1.6;
+}
+
+.module-hero strong {
+  display: block;
+  color: #241b35;
+  line-height: 1.7;
+  font-size: 16px;
+}
+
+.module-hero > span {
+  background: linear-gradient(135deg, #7e4bb5, #a476cf);
+  color: white;
+  border-radius: 20px;
+  display: grid;
+  place-items: center;
+  text-align: center;
+  padding: 20px;
+  font-weight: 900;
+  font-size: 20px;
+}
+
+.module-actions {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
+
+.module-actions button {
+  border: none;
+  border-radius: 16px;
+  padding: 14px;
+  background: #f3eafd;
+  color: #4c267f;
+  font-weight: 900;
+  cursor: default;
+}
+
+.module-examples {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+}
+
+.module-examples article {
+  background: white;
+  border: 1px solid #eadcf7;
+  border-radius: 18px;
+  padding: 18px;
+  box-shadow: 0 12px 30px rgba(95,53,145,.08);
+}
+
+.module-examples h3 {
+  margin: 0 0 10px;
+  color: #6d3caf;
+  font-size: 21px;
+}
+
+.module-examples p {
+  margin: 0;
+  color: #241b35;
+  font-size: 15px;
+  line-height: 1.7;
+  font-weight: 700;
+}
+
+.module-upsell {
+  background: #211633;
+  color: white;
+  border-radius: 20px;
+  padding: 20px;
+}
+
+.module-upsell b {
+  display: block;
+  margin-bottom: 8px;
+  color: #d9c3f3;
+  font-size: 20px;
+}
+
+.module-upsell p {
+  margin: 0;
+  line-height: 1.7;
+  font-weight: 700;
+}
+
+.settings-card label {
+  font-weight: 900;
+  color: #4c267f;
+}
+
+@media (max-width: 1200px) {
+  .module-hero {
+    grid-template-columns: 1fr;
+  }
+
+  .module-actions {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .module-examples,
+  .dashboard-pitches {
+    grid-template-columns: 1fr;
+  }
+}
+`;
+
+fs.writeFileSync("src/App.css", css, "utf8");
+
+console.log("Admin pages enhanced successfully");
