@@ -1,4 +1,24 @@
-import { useEffect, useMemo, useState } from "react";
+const fs = require("fs");
+
+const adminPath = "src/pages/Admin.jsx";
+const tvPath = "src/pages/TV.jsx";
+const cssPath = "src/pages/TV.css";
+
+let admin = fs.readFileSync(adminPath, "utf8");
+
+admin = admin.replace(
+  "בהמשך אפשר להפוך כל דף למודול מלא בתשלום נפרד.",
+  "בהמשך אפשר להפוך כל דף למודול מתקדם לפי בקשת הלקוח ובהתאם לאופי הפעילות בבניין."
+);
+
+admin = admin.replace(
+  "כל מודול ניתן לפיתוח מלא לפי אפיון ותמחור נפרד.",
+  "כל מודול ניתן להרחבה עתידית לפי בקשת הלקוח ואופי הפעילות בבניין."
+);
+
+fs.writeFileSync(adminPath, admin, "utf8");
+
+const tv = `import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { supabase } from "../lib/supabase";
 import buildingImage from "../assets/building.jpeg";
@@ -214,3 +234,115 @@ export default function TV() {
     </main>
   );
 }
+`;
+
+fs.writeFileSync(tvPath, tv, "utf8");
+
+let css = fs.readFileSync(cssPath, "utf8");
+
+css += `
+
+/* TV NOTICE SLIDES */
+.client-tv-notices {
+  display: none !important;
+}
+
+.client-tv-notice-slide {
+  width: 92%;
+  min-height: 29vh;
+  max-height: 36vh;
+  overflow: hidden;
+  border-radius: 24px;
+  background: rgba(255,255,255,.96);
+  box-shadow: 0 20px 50px rgba(95,53,145,.15);
+  direction: rtl;
+}
+
+.client-tv-notice-slide header {
+  background: linear-gradient(135deg, #7e4bb5, #a476cf);
+  color: white;
+  padding: 1.3vh 1.8vw;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: clamp(20px, 1.45vw, 30px);
+  font-weight: 900;
+}
+
+.client-tv-notice-slide article {
+  min-height: 18vh;
+  padding: 2.4vh 2vw;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  animation: synqSlideIn .42s ease both;
+}
+
+.client-tv-notice-slide h3 {
+  margin: 0 0 1.1vh;
+  color: #5b3199;
+  font-size: clamp(30px, 2.45vw, 52px);
+  line-height: 1.1;
+  font-weight: 900;
+}
+
+.client-tv-notice-slide p {
+  margin: 0;
+  color: #241b35;
+  font-size: clamp(20px, 1.45vw, 30px);
+  line-height: 1.55;
+  font-weight: 800;
+}
+
+.client-tv-notice-slide footer {
+  height: 4.2vh;
+  min-height: 34px;
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  align-items: center;
+  border-top: 1px solid #eadcf7;
+}
+
+.client-tv-notice-slide footer span {
+  width: 12px;
+  height: 12px;
+  border-radius: 999px;
+  background: #d9c3f3;
+  opacity: .65;
+}
+
+.client-tv-notice-slide footer span.active {
+  width: 34px;
+  opacity: 1;
+  background: #7e4bb5;
+}
+
+.client-tv-notice-slide.urgent-slide {
+  box-shadow: 0 24px 70px rgba(190,18,60,.22);
+}
+
+.client-tv-notice-slide.urgent-slide header {
+  background: linear-gradient(135deg, #be123c, #fb7185);
+}
+
+.client-tv-notice-slide.urgent-slide h3 {
+  color: #be123c;
+}
+
+@keyframes synqSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+`;
+
+fs.writeFileSync(cssPath, css, "utf8");
+
+console.log("Updated admin wording and TV notice slides successfully");
