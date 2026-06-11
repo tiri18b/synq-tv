@@ -1019,3 +1019,142 @@ body,
   right: 1.3vw !important;
   top: 1.5vh !important;
 }
+
+
+/* ROOM BASED TV CALIBRATION */
+.client-tv-shell {
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  background: #fbf7ff;
+  position: relative;
+}
+
+.client-tv-stage {
+  width: 100vw;
+  height: 100vh;
+  transform: translate(var(--tv-x, 0px), var(--tv-y, 0px)) scale(var(--tv-scale, 1));
+  transform-origin: center center;
+  overflow: hidden;
+  will-change: transform;
+}
+
+.client-tv-ticker {
+  bottom: calc(1.1vh + var(--tv-bottom-safe, 0px)) !important;
+}
+
+.client-tv-feature-grid {
+  bottom: calc(12vh + var(--tv-bottom-safe, 0px)) !important;
+}
+
+.client-tv-calibration-button {
+  position: fixed;
+  right: 1.3vw;
+  top: 6.3vh;
+  z-index: 9999;
+  border: none;
+  border-radius: 999px;
+  background: rgba(33, 22, 51, .18);
+  color: rgba(255,255,255,.55);
+  padding: 8px 14px;
+  font-family: Assistant, Arial, sans-serif;
+  font-weight: 900;
+  font-size: 13px;
+  cursor: pointer;
+  backdrop-filter: blur(8px);
+  opacity: .18;
+  transition: opacity .2s ease, background .2s ease;
+}
+
+.client-tv-calibration-button:hover,
+.client-tv-calibration-button:focus {
+  opacity: 1;
+  color: white;
+  background: rgba(33, 22, 51, .78);
+  outline: 3px solid rgba(126, 75, 181, .35);
+}
+
+.client-tv-room-badge {
+  position: fixed;
+  right: 1.4vw;
+  top: 10.2vh;
+  z-index: 9999;
+  padding: 5px 10px;
+  border-radius: 999px;
+  background: rgba(255,255,255,.5);
+  color: rgba(33,22,51,.55);
+  font-size: 11px;
+  font-weight: 900;
+  opacity: .12;
+  pointer-events: none;
+}
+
+.client-tv-shell:hover .client-tv-room-badge,
+.client-tv-shell:focus-within .client-tv-room-badge {
+  opacity: .8;
+}
+
+/* ADMIN ROOM CALIBRATION */
+.screen-calibration-card {
+  display: grid;
+  gap: 14px;
+  background: #fbf8ff;
+  border: 1px solid #eadcf7;
+  border-radius: 18px;
+  padding: 16px;
+}
+
+.screen-calibration-card h3 {
+  margin: 0;
+  color: #5b3199;
+}
+
+.screen-calibration-card p {
+  margin: 0;
+  line-height: 1.6;
+  font-weight: 800;
+}
+
+.calibration-room-row {
+  display: grid;
+  grid-template-columns: 1fr 150px;
+  gap: 12px;
+  align-items: end;
+}
+
+.calibration-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 11px;
+}
+
+.calibration-grid label,
+.calibration-room-row label {
+  display: grid;
+  gap: 7px;
+  font-weight: 900;
+  color: #4c267f;
+}
+
+.calibration-grid span {
+  color: #6b5f78;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.calibration-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+@media (max-width: 1200px) {
+  .calibration-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .calibration-room-row,
+  .calibration-actions {
+    grid-template-columns: 1fr;
+  }
+}

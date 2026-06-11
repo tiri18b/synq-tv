@@ -67,6 +67,13 @@ const defaultPinnedModules = {
   reception: true,
 };
 
+const defaultCalibration = {
+  scale: 1,
+  x: 0,
+  y: 0,
+  bottom: 0,
+};
+
 function getReadPostIds() {
   try {
     return JSON.parse(localStorage.getItem("synq_read_posts") || "[]");
@@ -79,12 +86,24 @@ function saveReadPostIds(ids) {
   localStorage.setItem("synq_read_posts", JSON.stringify(ids));
 }
 
-function parsePinnedModules(value) {
+function parseJson(value, fallback) {
   try {
-    return { ...defaultPinnedModules, ...JSON.parse(value || "{}") };
+    return { ...fallback, ...JSON.parse(value || "{}") };
   } catch {
-    return defaultPinnedModules;
+    return fallback;
   }
+}
+
+function getRoomFromUrlOrStorage() {
+  const params = new URLSearchParams(window.location.search);
+  const roomFromUrl = params.get("room");
+
+  if (roomFromUrl) {
+    localStorage.setItem("synq_tv_room", roomFromUrl);
+    return roomFromUrl;
+  }
+
+  return localStorage.getItem("synq_tv_room") || "default";
 }
 
 export default function TV() {
@@ -96,12 +115,24 @@ export default function TV() {
 
     alert("כפתור זה פעיל רק באפליקציית הסטרימר");
   };
+
+  const openCalibrationPrompt = () => {
+    const currentRoom = localStorage.getItem("synq_tv_room") || "default";
+    const nextRoom = window.prompt("מספר חדר למסך זה", currentRoom);
+
+    if (!nextRoom) return;
+
+    localStorage.setItem("synq_tv_room", nextRoom.trim() || "default");
+    window.location.href = "/tv?room=" + encodeURIComponent(nextRoom.trim() || "default");
+  };
+
   const [posts, setPosts] = useState([]);
   const [settings, setSettings] = useState({});
   const [weather, setWeather] = useState(null);
   const [now, setNow] = useState(new Date());
   const [pageIndex, setPageIndex] = useState(0);
   const [readPostIds, setReadPostIds] = useState(getReadPostIds);
+  const [roomId, setRoomId] = useState(getRoomFromUrlOrStorage);
 
   const loadPosts = async () => {
     const { data } = await supabase
@@ -168,6 +199,7 @@ export default function TV() {
       if (!document.hidden) {
         loadPosts();
         loadSettings();
+        setRoomId(getRoomFromUrlOrStorage());
       }
     };
 
@@ -184,9 +216,21 @@ export default function TV() {
     };
   }, []);
 
+  const calibration = useMemo(() => {
+    const allCalibrations = parseJson(settings.tv_room_calibrations, {});
+    return allCalibrations[roomId] || allCalibrations.default || defaultCalibration;
+  }, [settings.tv_room_calibrations, roomId]);
+
+  const stageStyle = {
+    "--tv-scale": String(calibration.scale ?? 1),
+    "--tv-x": (Number(calibration.x) || 0) + "px",
+    "--tv-y": (Number(calibration.y) || 0) + "px",
+    "--tv-bottom-safe": (Number(calibration.bottom) || 0) + "px",
+  };
+
   const messages = useMemo(() => {
     const readSet = new Set(readPostIds.map(String));
-    const enabledPinnedModules = parsePinnedModules(settings.enabled_pinned_modules);
+    const enabledPinnedModules = parseJson(settings.enabled_pinned_modules, defaultPinnedModules);
 
     const urgentAdminMessages = posts
       .filter((post) => post.type === "urgent")
@@ -254,100 +298,112 @@ export default function TV() {
   const visibleMessages = messagePages[pageIndex % messagePages.length] || [];
 
   return (
-    <main className="client-tv">
-      <section className="client-tv-image-side">
-        <img src={buildingImage} className="client-tv-building" alt="בניין SYNQ" />
+    <main className="client-tv-shell" style={stageStyle}>
+      <section className="client-tv-stage">
+        <main className="client-tv">
+          <section className="client-tv-image-side">
+            <img src={buildingImage} className="client-tv-building" alt="בניין SYNQ" />
 
-        <section className="client-tv-feature-grid">
-          <Link to="/feature/events">📅<b>אירועים</b><small>(אופציונלי)</small></Link>
-          <Link to="/feature/personal">👤<b>איזור אישי</b><small>(אופציונלי)</small></Link>
-          <Link to="/feature/service">🔧<b>קריאת שירות</b><small>(אופציונלי)</small></Link>
-          <Link to="/feature/packages">📦<b>חבילות</b><small>(אופציונלי)</small></Link>
-          <Link to="/feature/maintenance">🧹<b>תחזוקה</b><small>(אופציונלי)</small></Link>
-          <Link to="/feature/reception">🛎️<b>דלפק קבלה</b><small>(אופציונלי)</small></Link>
-        </section>
-      </section>
+            <section className="client-tv-feature-grid">
+              <Link to="/feature/events">📅<b>אירועים</b><small>(אופציונלי)</small></Link>
+              <Link to="/feature/personal">👤<b>איזור אישי</b><small>(אופציונלי)</small></Link>
+              <Link to="/feature/service">🔧<b>קריאת שירות</b><small>(אופציונלי)</small></Link>
+              <Link to="/feature/packages">📦<b>חבילות</b><small>(אופציונלי)</small></Link>
+              <Link to="/feature/maintenance">🧹<b>תחזוקה</b><small>(אופציונלי)</small></Link>
+              <Link to="/feature/reception">🛎️<b>דלפק קבלה</b><small>(אופציונלי)</small></Link>
+            </section>
+          </section>
 
-      <section className="client-tv-content-side">
-        <section className={"client-tv-live-info clock-" + (settings.clock_position || "center")}>
-          <div className="client-tv-live-row">
-            <span>🕒</span>
-            <strong>{now.toLocaleTimeString("he-IL", { hour: "2-digit", minute: "2-digit" })}</strong>
+          <section className="client-tv-content-side">
+            <section className={"client-tv-live-info clock-" + (settings.clock_position || "center")}>
+              <div className="client-tv-live-row">
+                <span>🕒</span>
+                <strong>{now.toLocaleTimeString("he-IL", { hour: "2-digit", minute: "2-digit" })}</strong>
+              </div>
+
+              <div className="client-tv-live-row">
+                <span>📅</span>
+                <b>{now.toLocaleDateString("he-IL", { weekday: "long", day: "numeric", month: "long" })}</b>
+              </div>
+
+              <div className="client-tv-live-separator" />
+
+              <div className="client-tv-live-row">
+                <span>🌤️</span>
+                <strong>{weather ? Math.round(Number(weather.temperature)) + "°" : "--"}</strong>
+              </div>
+
+              <div className="client-tv-live-city">
+                {settings.weather_city || "חיפה"}
+              </div>
+            </section>
+
+            <img src="/synq-logo.png" className="client-tv-logo" alt="SYNQ By Shbiro" />
+
+            <section className="client-tv-welcome">
+              <h1>ברוכים הבאים</h1>
+              <h2>למעונות הסטודנטים</h2>
+            </section>
+
+            <section className="client-tv-message-stack">
+              <header>
+                <span>🔔</span>
+                <strong>הודעות ועדכונים</strong>
+              </header>
+
+              <div className="client-tv-message-list">
+                {visibleMessages.map((message, index) => (
+                  <article
+                    key={message.id}
+                    className={[
+                      message.messageKind === "urgent" ? "urgent-message" : "",
+                      message.messageKind === "pinned" ? "pinned-message" : "",
+                      message.messageKind === "regular" ? "regular-message" : "",
+                      index === 0 ? "first-message" : "",
+                    ].join(" ")}
+                  >
+                    <div className="message-icon">{message.icon || "📌"}</div>
+
+                    <div className="message-content">
+                      <h3>{message.title}</h3>
+                      <p>{message.content}</p>
+                    </div>
+
+                    {message.messageKind === "urgent" && (
+                      <button type="button" onClick={() => markAsRead(message.id)}>
+                        קראתי
+                      </button>
+                    )}
+                  </article>
+                ))}
+              </div>
+
+              <footer>
+                {messagePages.map((page, index) => (
+                  <span key={index} className={index === pageIndex % messagePages.length ? "active" : ""} />
+                ))}
+              </footer>
+            </section>
+          </section>
+
+          <button type="button" className="client-tv-home-button" onClick={openOldHomeFromTv}>
+            אפליקציות
+          </button>
+
+          <button type="button" className="client-tv-calibration-button" onClick={openCalibrationPrompt}>
+            כיול מסך
+          </button>
+
+          <div className="client-tv-room-badge">
+            חדר {roomId}
           </div>
 
-          <div className="client-tv-live-row">
-            <span>📅</span>
-            <b>{now.toLocaleDateString("he-IL", { weekday: "long", day: "numeric", month: "long" })}</b>
-          </div>
-
-          <div className="client-tv-live-separator" />
-
-          <div className="client-tv-live-row">
-            <span>🌤️</span>
-            <strong>{weather ? Math.round(Number(weather.temperature)) + "°" : "--"}</strong>
-          </div>
-
-          <div className="client-tv-live-city">
-            {settings.weather_city || "חיפה"}
-          </div>
-        </section>
-
-        <img src="/synq-logo.png" className="client-tv-logo" alt="SYNQ By Shbiro" />
-
-        <section className="client-tv-welcome">
-          <h1>ברוכים הבאים</h1>
-          <h2>למעונות הסטודנטים</h2>
-        </section>
-
-        <section className="client-tv-message-stack">
-          <header>
-            <span>🔔</span>
-            <strong>הודעות ועדכונים</strong>
-          </header>
-
-          <div className="client-tv-message-list">
-            {visibleMessages.map((message, index) => (
-              <article
-                key={message.id}
-                className={[
-                  message.messageKind === "urgent" ? "urgent-message" : "",
-                  message.messageKind === "pinned" ? "pinned-message" : "",
-                  message.messageKind === "regular" ? "regular-message" : "",
-                  index === 0 ? "first-message" : "",
-                ].join(" ")}
-              >
-                <div className="message-icon">{message.icon || "📌"}</div>
-
-                <div className="message-content">
-                  <h3>{message.title}</h3>
-                  <p>{message.content}</p>
-                </div>
-
-                {message.messageKind === "urgent" && (
-                  <button type="button" onClick={() => markAsRead(message.id)}>
-                    קראתי
-                  </button>
-                )}
-              </article>
-            ))}
-          </div>
-
-          <footer>
-            {messagePages.map((page, index) => (
-              <span key={index} className={index === pageIndex % messagePages.length ? "active" : ""} />
-            ))}
+          <footer className="client-tv-ticker">
+            <marquee direction="right">{tickerText}</marquee>
+            <b>{now.toLocaleTimeString("he-IL", { hour: "2-digit", minute: "2-digit" })}</b>
           </footer>
-        </section>
+        </main>
       </section>
-
-      <button type="button" className="client-tv-home-button" onClick={openOldHomeFromTv}>
-        אפליקציות
-      </button>
-
-      <footer className="client-tv-ticker">
-        <marquee direction="right">{tickerText}</marquee>
-        <b>{now.toLocaleTimeString("he-IL", { hour: "2-digit", minute: "2-digit" })}</b>
-      </footer>
     </main>
   );
 }

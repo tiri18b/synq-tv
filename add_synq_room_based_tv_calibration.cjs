@@ -1,4 +1,10 @@
-import { useEffect, useState } from "react";
+const fs = require("fs");
+
+const adminPath = "src/pages/Admin.jsx";
+const tvPath = "src/pages/TV.jsx";
+const tvCssPath = "src/pages/TV.css";
+
+const admin = `import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "../lib/supabase";
 
@@ -566,3 +572,565 @@ export default function Admin() {
     </main>
   );
 }
+`;
+
+const tv = `import { useEffect, useMemo, useState } from "react";
+import { Link } from "react-router-dom";
+import { supabase } from "../lib/supabase";
+import buildingImage from "../assets/building.jpeg";
+import "./TV.css";
+
+const tickerText =
+  "הגעתם הביתה - הגעתם ל- SYNQ * רשת המגורים החדשה לסטודנטים מקבוצת שבירו * SYNQ המקום שבו הכל קורה";
+
+const pinnedMessages = {
+  events: {
+    id: "pinned-events",
+    title: "אירועים בבניין",
+    content: "עדכונים על מפגשי דיירים, סדנאות ופעילויות קהילה יופיעו כאן.",
+    type: "pinned",
+    icon: "📅",
+    order: 10,
+  },
+  personal: {
+    id: "pinned-personal",
+    title: "איזור אישי לדייר",
+    content: "בהמשך ניתן להציג הודעות אישיות, מסמכים ועדכונים לפי דייר או חדר.",
+    type: "pinned",
+    icon: "👤",
+    order: 20,
+  },
+  service: {
+    id: "pinned-service",
+    title: "קריאות שירות",
+    content: "פתיחת תקלות, עדכון סטטוס ומעקב אחר טיפול בדירה או בשטחים הציבוריים.",
+    type: "pinned",
+    icon: "🔧",
+    order: 30,
+  },
+  packages: {
+    id: "pinned-packages",
+    title: "חבילות בדלפק הקבלה",
+    content: "כאן יוצגו חבילות שממתינות לאיסוף ושעות איסוף מעודכנות.",
+    type: "pinned",
+    icon: "📦",
+    order: 40,
+  },
+  maintenance: {
+    id: "pinned-maintenance",
+    title: "תחזוקה שוטפת",
+    content: "עדכונים על עבודות תחזוקה, ניקיון, מעליות, מים וחשמל יוצגו כאן.",
+    type: "pinned",
+    icon: "🧹",
+    order: 50,
+  },
+  reception: {
+    id: "pinned-reception",
+    title: "דלפק קבלה",
+    content: "שעות פעילות, נהלים, הודעות קבלה ויצירת קשר עם הנהלת הבניין.",
+    type: "pinned",
+    icon: "🛎️",
+    order: 60,
+  },
+};
+
+const defaultPinnedModules = {
+  events: true,
+  personal: true,
+  service: true,
+  packages: true,
+  maintenance: true,
+  reception: true,
+};
+
+const defaultCalibration = {
+  scale: 1,
+  x: 0,
+  y: 0,
+  bottom: 0,
+};
+
+function getReadPostIds() {
+  try {
+    return JSON.parse(localStorage.getItem("synq_read_posts") || "[]");
+  } catch {
+    return [];
+  }
+}
+
+function saveReadPostIds(ids) {
+  localStorage.setItem("synq_read_posts", JSON.stringify(ids));
+}
+
+function parseJson(value, fallback) {
+  try {
+    return { ...fallback, ...JSON.parse(value || "{}") };
+  } catch {
+    return fallback;
+  }
+}
+
+function getRoomFromUrlOrStorage() {
+  const params = new URLSearchParams(window.location.search);
+  const roomFromUrl = params.get("room");
+
+  if (roomFromUrl) {
+    localStorage.setItem("synq_tv_room", roomFromUrl);
+    return roomFromUrl;
+  }
+
+  return localStorage.getItem("synq_tv_room") || "default";
+}
+
+export default function TV() {
+  const openOldHomeFromTv = () => {
+    if (window.SynqAndroid && typeof window.SynqAndroid.openOldHome === "function") {
+      window.SynqAndroid.openOldHome();
+      return;
+    }
+
+    alert("כפתור זה פעיל רק באפליקציית הסטרימר");
+  };
+
+  const openCalibrationPrompt = () => {
+    const currentRoom = localStorage.getItem("synq_tv_room") || "default";
+    const nextRoom = window.prompt("מספר חדר למסך זה", currentRoom);
+
+    if (!nextRoom) return;
+
+    localStorage.setItem("synq_tv_room", nextRoom.trim() || "default");
+    window.location.href = "/tv?room=" + encodeURIComponent(nextRoom.trim() || "default");
+  };
+
+  const [posts, setPosts] = useState([]);
+  const [settings, setSettings] = useState({});
+  const [weather, setWeather] = useState(null);
+  const [now, setNow] = useState(new Date());
+  const [pageIndex, setPageIndex] = useState(0);
+  const [readPostIds, setReadPostIds] = useState(getReadPostIds);
+  const [roomId, setRoomId] = useState(getRoomFromUrlOrStorage);
+
+  const loadPosts = async () => {
+    const { data } = await supabase
+      .from("posts")
+      .select("*")
+      .eq("active", true)
+      .order("created_at", { ascending: false });
+
+    setPosts(data || []);
+  };
+
+  const loadSettings = async () => {
+    const { data } = await supabase.from("app_settings").select("*");
+
+    const obj = {};
+    (data || []).forEach((row) => {
+      obj[row.key] = row.value;
+    });
+
+    setSettings(obj);
+
+    const lat = obj.weather_lat || "32.7940";
+    const lon = obj.weather_lon || "34.9896";
+
+    try {
+      const response = await fetch(
+        "https://api.open-meteo.com/v1/forecast?latitude=" +
+          encodeURIComponent(lat) +
+          "&longitude=" +
+          encodeURIComponent(lon) +
+          "&current_weather=true&timezone=Asia%2FJerusalem"
+      );
+
+      const json = await response.json();
+      setWeather(json.current_weather || null);
+    } catch {
+      setWeather(null);
+    }
+  };
+
+  useEffect(() => {
+    loadPosts();
+    loadSettings();
+
+    const channel = supabase
+      .channel("synq-tv-live")
+      .on("postgres_changes", { event: "*", schema: "public", table: "posts" }, loadPosts)
+      .on("postgres_changes", { event: "*", schema: "public", table: "app_settings" }, loadSettings)
+      .subscribe();
+
+    const clockTimer = setInterval(() => {
+      setNow(new Date());
+    }, 1000);
+
+    const postsRefreshTimer = setInterval(() => {
+      loadPosts();
+    }, 5000);
+
+    const settingsRefreshTimer = setInterval(() => {
+      loadSettings();
+    }, 30000);
+
+    const reloadWhenVisible = () => {
+      if (!document.hidden) {
+        loadPosts();
+        loadSettings();
+        setRoomId(getRoomFromUrlOrStorage());
+      }
+    };
+
+    window.addEventListener("focus", reloadWhenVisible);
+    document.addEventListener("visibilitychange", reloadWhenVisible);
+
+    return () => {
+      clearInterval(clockTimer);
+      clearInterval(postsRefreshTimer);
+      clearInterval(settingsRefreshTimer);
+      window.removeEventListener("focus", reloadWhenVisible);
+      document.removeEventListener("visibilitychange", reloadWhenVisible);
+      supabase.removeChannel(channel);
+    };
+  }, []);
+
+  const calibration = useMemo(() => {
+    const allCalibrations = parseJson(settings.tv_room_calibrations, {});
+    return allCalibrations[roomId] || allCalibrations.default || defaultCalibration;
+  }, [settings.tv_room_calibrations, roomId]);
+
+  const stageStyle = {
+    "--tv-scale": String(calibration.scale ?? 1),
+    "--tv-x": (Number(calibration.x) || 0) + "px",
+    "--tv-y": (Number(calibration.y) || 0) + "px",
+    "--tv-bottom-safe": (Number(calibration.bottom) || 0) + "px",
+  };
+
+  const messages = useMemo(() => {
+    const readSet = new Set(readPostIds.map(String));
+    const enabledPinnedModules = parseJson(settings.enabled_pinned_modules, defaultPinnedModules);
+
+    const urgentAdminMessages = posts
+      .filter((post) => post.type === "urgent")
+      .filter((post) => !readSet.has(String(post.id)))
+      .map((post) => ({
+        ...post,
+        icon: "🚨",
+        messageKind: "urgent",
+      }));
+
+    const activePinnedMessages = Object.entries(pinnedMessages)
+      .filter(([key]) => enabledPinnedModules[key])
+      .map(([, message]) => ({
+        ...message,
+        created_at: "2026-01-01T00:00:00.000Z",
+        messageKind: "pinned",
+      }))
+      .sort((a, b) => a.order - b.order);
+
+    const regularAdminMessages = posts
+      .filter((post) => post.type !== "urgent")
+      .map((post) => ({
+        ...post,
+        icon: "📌",
+        messageKind: "regular",
+      }));
+
+    return [
+      ...urgentAdminMessages,
+      ...activePinnedMessages,
+      ...regularAdminMessages,
+    ];
+  }, [posts, readPostIds, settings.enabled_pinned_modules]);
+
+  const messagePages = useMemo(() => {
+    const pages = [];
+
+    for (let i = 0; i < messages.length; i += 3) {
+      pages.push(messages.slice(i, i + 3));
+    }
+
+    return pages.length > 0 ? pages : [[]];
+  }, [messages]);
+
+  useEffect(() => {
+    if (messagePages.length <= 1) return;
+
+    const slideTimer = setInterval(() => {
+      setPageIndex((current) => (current + 1) % messagePages.length);
+    }, 10000);
+
+    return () => clearInterval(slideTimer);
+  }, [messagePages.length]);
+
+  useEffect(() => {
+    setPageIndex(0);
+  }, [messagePages.length]);
+
+  const markAsRead = (postId) => {
+    const nextReadIds = Array.from(new Set([...readPostIds.map(String), String(postId)]));
+    setReadPostIds(nextReadIds);
+    saveReadPostIds(nextReadIds);
+  };
+
+  const visibleMessages = messagePages[pageIndex % messagePages.length] || [];
+
+  return (
+    <main className="client-tv-shell" style={stageStyle}>
+      <section className="client-tv-stage">
+        <main className="client-tv">
+          <section className="client-tv-image-side">
+            <img src={buildingImage} className="client-tv-building" alt="בניין SYNQ" />
+
+            <section className="client-tv-feature-grid">
+              <Link to="/feature/events">📅<b>אירועים</b><small>(אופציונלי)</small></Link>
+              <Link to="/feature/personal">👤<b>איזור אישי</b><small>(אופציונלי)</small></Link>
+              <Link to="/feature/service">🔧<b>קריאת שירות</b><small>(אופציונלי)</small></Link>
+              <Link to="/feature/packages">📦<b>חבילות</b><small>(אופציונלי)</small></Link>
+              <Link to="/feature/maintenance">🧹<b>תחזוקה</b><small>(אופציונלי)</small></Link>
+              <Link to="/feature/reception">🛎️<b>דלפק קבלה</b><small>(אופציונלי)</small></Link>
+            </section>
+          </section>
+
+          <section className="client-tv-content-side">
+            <section className={"client-tv-live-info clock-" + (settings.clock_position || "center")}>
+              <div className="client-tv-live-row">
+                <span>🕒</span>
+                <strong>{now.toLocaleTimeString("he-IL", { hour: "2-digit", minute: "2-digit" })}</strong>
+              </div>
+
+              <div className="client-tv-live-row">
+                <span>📅</span>
+                <b>{now.toLocaleDateString("he-IL", { weekday: "long", day: "numeric", month: "long" })}</b>
+              </div>
+
+              <div className="client-tv-live-separator" />
+
+              <div className="client-tv-live-row">
+                <span>🌤️</span>
+                <strong>{weather ? Math.round(Number(weather.temperature)) + "°" : "--"}</strong>
+              </div>
+
+              <div className="client-tv-live-city">
+                {settings.weather_city || "חיפה"}
+              </div>
+            </section>
+
+            <img src="/synq-logo.png" className="client-tv-logo" alt="SYNQ By Shbiro" />
+
+            <section className="client-tv-welcome">
+              <h1>ברוכים הבאים</h1>
+              <h2>למעונות הסטודנטים</h2>
+            </section>
+
+            <section className="client-tv-message-stack">
+              <header>
+                <span>🔔</span>
+                <strong>הודעות ועדכונים</strong>
+              </header>
+
+              <div className="client-tv-message-list">
+                {visibleMessages.map((message, index) => (
+                  <article
+                    key={message.id}
+                    className={[
+                      message.messageKind === "urgent" ? "urgent-message" : "",
+                      message.messageKind === "pinned" ? "pinned-message" : "",
+                      message.messageKind === "regular" ? "regular-message" : "",
+                      index === 0 ? "first-message" : "",
+                    ].join(" ")}
+                  >
+                    <div className="message-icon">{message.icon || "📌"}</div>
+
+                    <div className="message-content">
+                      <h3>{message.title}</h3>
+                      <p>{message.content}</p>
+                    </div>
+
+                    {message.messageKind === "urgent" && (
+                      <button type="button" onClick={() => markAsRead(message.id)}>
+                        קראתי
+                      </button>
+                    )}
+                  </article>
+                ))}
+              </div>
+
+              <footer>
+                {messagePages.map((page, index) => (
+                  <span key={index} className={index === pageIndex % messagePages.length ? "active" : ""} />
+                ))}
+              </footer>
+            </section>
+          </section>
+
+          <button type="button" className="client-tv-home-button" onClick={openOldHomeFromTv}>
+            אפליקציות
+          </button>
+
+          <button type="button" className="client-tv-calibration-button" onClick={openCalibrationPrompt}>
+            כיול מסך
+          </button>
+
+          <div className="client-tv-room-badge">
+            חדר {roomId}
+          </div>
+
+          <footer className="client-tv-ticker">
+            <marquee direction="right">{tickerText}</marquee>
+            <b>{now.toLocaleTimeString("he-IL", { hour: "2-digit", minute: "2-digit" })}</b>
+          </footer>
+        </main>
+      </section>
+    </main>
+  );
+}
+`;
+
+fs.writeFileSync(adminPath, admin, "utf8");
+fs.writeFileSync(tvPath, tv, "utf8");
+
+let css = fs.existsSync(tvCssPath) ? fs.readFileSync(tvCssPath, "utf8") : "";
+
+css += `
+
+/* ROOM BASED TV CALIBRATION */
+.client-tv-shell {
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  background: #fbf7ff;
+  position: relative;
+}
+
+.client-tv-stage {
+  width: 100vw;
+  height: 100vh;
+  transform: translate(var(--tv-x, 0px), var(--tv-y, 0px)) scale(var(--tv-scale, 1));
+  transform-origin: center center;
+  overflow: hidden;
+  will-change: transform;
+}
+
+.client-tv-ticker {
+  bottom: calc(1.1vh + var(--tv-bottom-safe, 0px)) !important;
+}
+
+.client-tv-feature-grid {
+  bottom: calc(12vh + var(--tv-bottom-safe, 0px)) !important;
+}
+
+.client-tv-calibration-button {
+  position: fixed;
+  right: 1.3vw;
+  top: 6.3vh;
+  z-index: 9999;
+  border: none;
+  border-radius: 999px;
+  background: rgba(33, 22, 51, .18);
+  color: rgba(255,255,255,.55);
+  padding: 8px 14px;
+  font-family: Assistant, Arial, sans-serif;
+  font-weight: 900;
+  font-size: 13px;
+  cursor: pointer;
+  backdrop-filter: blur(8px);
+  opacity: .18;
+  transition: opacity .2s ease, background .2s ease;
+}
+
+.client-tv-calibration-button:hover,
+.client-tv-calibration-button:focus {
+  opacity: 1;
+  color: white;
+  background: rgba(33, 22, 51, .78);
+  outline: 3px solid rgba(126, 75, 181, .35);
+}
+
+.client-tv-room-badge {
+  position: fixed;
+  right: 1.4vw;
+  top: 10.2vh;
+  z-index: 9999;
+  padding: 5px 10px;
+  border-radius: 999px;
+  background: rgba(255,255,255,.5);
+  color: rgba(33,22,51,.55);
+  font-size: 11px;
+  font-weight: 900;
+  opacity: .12;
+  pointer-events: none;
+}
+
+.client-tv-shell:hover .client-tv-room-badge,
+.client-tv-shell:focus-within .client-tv-room-badge {
+  opacity: .8;
+}
+
+/* ADMIN ROOM CALIBRATION */
+.screen-calibration-card {
+  display: grid;
+  gap: 14px;
+  background: #fbf8ff;
+  border: 1px solid #eadcf7;
+  border-radius: 18px;
+  padding: 16px;
+}
+
+.screen-calibration-card h3 {
+  margin: 0;
+  color: #5b3199;
+}
+
+.screen-calibration-card p {
+  margin: 0;
+  line-height: 1.6;
+  font-weight: 800;
+}
+
+.calibration-room-row {
+  display: grid;
+  grid-template-columns: 1fr 150px;
+  gap: 12px;
+  align-items: end;
+}
+
+.calibration-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 11px;
+}
+
+.calibration-grid label,
+.calibration-room-row label {
+  display: grid;
+  gap: 7px;
+  font-weight: 900;
+  color: #4c267f;
+}
+
+.calibration-grid span {
+  color: #6b5f78;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.calibration-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+@media (max-width: 1200px) {
+  .calibration-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .calibration-room-row,
+  .calibration-actions {
+    grid-template-columns: 1fr;
+  }
+}
+`;
+
+fs.writeFileSync(tvCssPath, css, "utf8");
+
+console.log("Room based TV calibration was added to Admin and TV");
