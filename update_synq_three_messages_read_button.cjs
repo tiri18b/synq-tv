@@ -1,4 +1,46 @@
-import { useEffect, useMemo, useState } from "react";
+const fs = require("fs");
+
+const adminPath = "src/pages/Admin.jsx";
+const tvPath = "src/pages/TV.jsx";
+const cssPath = "src/pages/TV.css";
+
+let admin = fs.readFileSync(adminPath, "utf8");
+
+admin = admin.replaceAll("הודעה דחופה ל 10 דקות", "הודעה דחופה עד סימון קראתי");
+admin = admin.replaceAll("הודעה דחופה משתלטת על המסך למשך 10 דקות ומתאימה למצבי חירום או עדכון חשוב.", "הודעה דחופה תעלה תמיד לשורה הראשונה במסך ה TV ותישאר מוצגת עד שהלקוח יסמן קראתי או עד שהמנהל יכבה אותה מהמערכת.");
+admin = admin.replaceAll("הודעה דחופה ל 10 דקות", "הודעה דחופה עד סימון קראתי");
+admin = admin.replaceAll("הודעה דחופה", "הודעה דחופה");
+
+admin = admin.replace(
+  `const urgentUntil = type === "urgent" ? new Date(Date.now() + 10 * 60 * 1000).toISOString() : null;`,
+  `const urgentUntil = null;`
+);
+
+admin = admin.replace(
+  `<option value="urgent">הודעה דחופה ל 10 דקות</option>`,
+  `<option value="urgent">הודעה דחופה עד סימון קראתי</option>`
+);
+
+if (!admin.includes("הודעה דחופה תופיע ללקוח עד סימון קראתי")) {
+  admin = admin.replace(
+    `<select value={type} onChange={(e) => setType(e.target.value)}>
+                <option value="regular">הודעה רגילה</option>
+                <option value="urgent">הודעה דחופה עד סימון קראתי</option>
+              </select>`,
+    `<select value={type} onChange={(e) => setType(e.target.value)}>
+                <option value="regular">הודעה רגילה</option>
+                <option value="urgent">הודעה דחופה עד סימון קראתי</option>
+              </select>
+
+              <p className="admin-helper">
+                הודעה דחופה תופיע ללקוח עד סימון קראתי. אם הלקוח לא סימן קראתי, ההודעה תמשיך להופיע. המנהל יכול בכל רגע לכבות אותה ממסך ניהול ההודעות.
+              </p>`
+  );
+}
+
+fs.writeFileSync(adminPath, admin, "utf8");
+
+const tv = `import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { supabase } from "../lib/supabase";
 import buildingImage from "../assets/building.jpeg";
@@ -246,3 +288,165 @@ export default function TV() {
     </main>
   );
 }
+`;
+
+fs.writeFileSync(tvPath, tv, "utf8");
+
+let css = fs.readFileSync(cssPath, "utf8");
+
+css += `
+
+/* TV THREE MESSAGES STACK WITH READ BUTTON */
+.client-tv-notices,
+.client-tv-notice-slide {
+  display: none !important;
+}
+
+.client-tv-message-stack {
+  width: 94%;
+  min-height: 36vh;
+  max-height: 40vh;
+  overflow: hidden;
+  border-radius: 24px;
+  background: rgba(255,255,255,.96);
+  box-shadow: 0 20px 50px rgba(95,53,145,.15);
+  direction: rtl;
+}
+
+.client-tv-message-stack header {
+  background: linear-gradient(135deg, #7e4bb5, #a476cf);
+  color: white;
+  padding: 1.1vh 1.7vw;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: clamp(19px, 1.32vw, 28px);
+  font-weight: 900;
+}
+
+.client-tv-message-list {
+  display: grid;
+  gap: .7vh;
+  padding: 1.1vh 1.1vw;
+  min-height: 26vh;
+}
+
+.client-tv-message-list article {
+  display: grid;
+  grid-template-columns: 48px 1fr 88px;
+  gap: 12px;
+  align-items: center;
+  min-height: 7.7vh;
+  padding: .85vh .85vw;
+  border-radius: 18px;
+  background: #fbf8ff;
+  border: 1px solid #eadcf7;
+  animation: synqSlideIn .42s ease both;
+}
+
+.client-tv-message-list article.urgent-message {
+  background: #fff1f2;
+  border-color: rgba(190,18,60,.32);
+  box-shadow: 0 12px 34px rgba(190,18,60,.12);
+}
+
+.client-tv-message-list article.first-message {
+  order: -1;
+}
+
+.message-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+  background: #eadcf7;
+  font-size: 22px;
+}
+
+.urgent-message .message-icon {
+  background: #fecdd3;
+}
+
+.message-content h3 {
+  margin: 0 0 .35vh;
+  color: #5b3199;
+  font-size: clamp(18px, 1.25vw, 26px);
+  line-height: 1.1;
+  font-weight: 900;
+}
+
+.urgent-message .message-content h3 {
+  color: #be123c;
+}
+
+.message-content p {
+  margin: 0;
+  color: #241b35;
+  font-size: clamp(13px, .9vw, 18px);
+  line-height: 1.35;
+  font-weight: 800;
+}
+
+.client-tv-message-list button {
+  border: none;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #7e4bb5, #a476cf);
+  color: white;
+  padding: 11px 10px;
+  font-weight: 900;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+.urgent-message button {
+  background: linear-gradient(135deg, #be123c, #fb7185);
+}
+
+.client-tv-message-stack footer {
+  height: 3.7vh;
+  min-height: 30px;
+  display: flex;
+  gap: 9px;
+  justify-content: center;
+  align-items: center;
+  border-top: 1px solid #eadcf7;
+}
+
+.client-tv-message-stack footer span {
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  background: #d9c3f3;
+  opacity: .65;
+}
+
+.client-tv-message-stack footer span.active {
+  width: 30px;
+  opacity: 1;
+  background: #7e4bb5;
+}
+
+@media (max-height: 800px) {
+  .client-tv-message-stack {
+    min-height: 34vh;
+    max-height: 38vh;
+  }
+
+  .client-tv-message-list article {
+    min-height: 7.1vh;
+  }
+
+  .message-content h3 {
+    font-size: clamp(16px, 1.12vw, 23px);
+  }
+
+  .message-content p {
+    font-size: clamp(12px, .82vw, 16px);
+  }
+}
+`;
+
+fs.writeFileSync(cssPath, css, "utf8");
+
+console.log("Updated TV to show 3 messages, urgent first, with read button");

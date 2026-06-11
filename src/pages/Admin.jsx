@@ -173,7 +173,7 @@ export default function Admin() {
       return;
     }
 
-    const urgentUntil = type === "urgent" ? new Date(Date.now() + 10 * 60 * 1000).toISOString() : null;
+    const urgentUntil = null;
 
     const { error } = await supabase.from("posts").insert({
       title,
@@ -296,7 +296,7 @@ export default function Admin() {
             <div className="admin-card">
               <h2>הוספת הודעה למסך</h2>
               <p className="admin-helper">
-                הודעה רגילה תופיע באזור ההודעות. הודעה דחופה משתלטת על המסך למשך 10 דקות ומתאימה למצבי חירום או עדכון חשוב.
+                הודעה רגילה תופיע באזור ההודעות. הודעה דחופה תעלה תמיד לשורה הראשונה במסך ה TV ותישאר מוצגת עד שהלקוח יסמן קראתי או עד שהמנהל יכבה אותה מהמערכת.
               </p>
 
               <input placeholder="כותרת" value={title} onChange={(e) => setTitle(e.target.value)} />
@@ -304,8 +304,12 @@ export default function Admin() {
 
               <select value={type} onChange={(e) => setType(e.target.value)}>
                 <option value="regular">הודעה רגילה</option>
-                <option value="urgent">הודעה דחופה ל 10 דקות</option>
+                <option value="urgent">הודעה דחופה עד סימון קראתי</option>
               </select>
+
+              <p className="admin-helper">
+                הודעה דחופה תופיע ללקוח עד סימון קראתי. אם הלקוח לא סימן קראתי, ההודעה תמשיך להופיע. המנהל יכול בכל רגע לכבות אותה ממסך ניהול ההודעות.
+              </p>
 
               <button onClick={savePost}>שמירת הודעה</button>
             </div>
