@@ -1226,3 +1226,47 @@ body,
 .client-tv-ticker {
   bottom: 1.1vh !important;
 }
+
+
+/* RESTORE CLEAN TV MESSAGES, 3 PER SLIDE */
+.client-tv-calibration-button,
+.client-tv-room-badge {
+  display: none !important;
+}
+
+.client-tv {
+  padding: 0 !important;
+}
+
+.client-tv-message-stack {
+  min-height: 30vh !important;
+  max-height: 33.5vh !important;
+  overflow: hidden !important;
+}
+
+.client-tv-message-list {
+  min-height: 21vh !important;
+  padding: .75vh .9vw !important;
+  gap: .45vh !important;
+}
+
+.client-tv-message-list article {
+  min-height: 6.35vh !important;
+  max-height: 7.1vh !important;
+  padding: .55vh .75vw !important;
+}
+
+.message-content p {
+  display: -webkit-box !important;
+  -webkit-line-clamp: 1 !important;
+  -webkit-box-orient: vertical !important;
+  overflow: hidden !important;
+}
+
+.client-tv-feature-grid {
+  bottom: 12vh !important;
+}
+
+.client-tv-ticker {
+  bottom: 1.1vh !important;
+}

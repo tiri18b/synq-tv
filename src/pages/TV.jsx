@@ -263,8 +263,8 @@ export default function TV() {
   const messagePages = useMemo(() => {
     const pages = [];
 
-    for (let i = 0; i < messages.length; i += 2) {
-      pages.push(messages.slice(i, i + 2));
+    for (let i = 0; i < messages.length; i += 3) {
+      pages.push(messages.slice(i, i + 3));
     }
 
     return pages.length > 0 ? pages : [[]];
