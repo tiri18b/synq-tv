@@ -32,13 +32,6 @@ const defaultPinnedModules = {
   reception: true,
 };
 
-const defaultCalibration = {
-  scale: 1,
-  x: 0,
-  y: 0,
-  bottom: 0,
-};
-
 const moduleContent = {
   events: {
     title: "אירועים",
@@ -169,12 +162,6 @@ export default function Admin() {
   const [weatherLon, setWeatherLon] = useState("34.9896");
   const [clockPosition, setClockPosition] = useState("center");
   const [enabledPinnedModules, setEnabledPinnedModules] = useState(defaultPinnedModules);
-  const [calibrations, setCalibrations] = useState({});
-  const [calibrationRoom, setCalibrationRoom] = useState("");
-  const [calibrationScale, setCalibrationScale] = useState("1");
-  const [calibrationX, setCalibrationX] = useState("0");
-  const [calibrationY, setCalibrationY] = useState("0");
-  const [calibrationBottom, setCalibrationBottom] = useState("0");
 
   const loadPosts = async () => {
     const { data } = await supabase.from("posts").select("*").order("created_at", { ascending: false });
@@ -198,14 +185,11 @@ export default function Admin() {
         obj[row.key] = row.value;
       });
 
-      const loadedCalibrations = parseJson(obj.tv_room_calibrations, {});
-
       setWeatherCity(obj.weather_city || "חיפה");
       setWeatherLat(obj.weather_lat || "32.7940");
       setWeatherLon(obj.weather_lon || "34.9896");
       setClockPosition(obj.clock_position || "center");
       setEnabledPinnedModules(parseJson(obj.enabled_pinned_modules, defaultPinnedModules));
-      setCalibrations(loadedCalibrations);
     };
 
     init();
@@ -255,7 +239,6 @@ export default function Admin() {
         { key: "weather_lon", value: weatherLon },
         { key: "clock_position", value: clockPosition },
         { key: "enabled_pinned_modules", value: JSON.stringify(enabledPinnedModules) },
-        { key: "tv_room_calibrations", value: JSON.stringify(calibrations) },
       ],
       { onConflict: "key" }
     );
@@ -268,79 +251,6 @@ export default function Admin() {
       ...current,
       [key]: !current[key],
     }));
-  };
-
-  const loadRoomCalibration = () => {
-    const room = calibrationRoom.trim();
-
-    if (!room) {
-      alert("נא להזין מספר חדר");
-      return;
-    }
-
-    const calibration = calibrations[room] || defaultCalibration;
-
-    setCalibrationScale(String(calibration.scale ?? 1));
-    setCalibrationX(String(calibration.x ?? 0));
-    setCalibrationY(String(calibration.y ?? 0));
-    setCalibrationBottom(String(calibration.bottom ?? 0));
-  };
-
-  const saveRoomCalibration = async () => {
-    const room = calibrationRoom.trim();
-
-    if (!room) {
-      alert("נא להזין מספר חדר");
-      return;
-    }
-
-    const next = {
-      ...calibrations,
-      [room]: {
-        scale: Number(calibrationScale) || 1,
-        x: Number(calibrationX) || 0,
-        y: Number(calibrationY) || 0,
-        bottom: Number(calibrationBottom) || 0,
-      },
-    };
-
-    setCalibrations(next);
-
-    await supabase.from("app_settings").upsert(
-      [
-        { key: "tv_room_calibrations", value: JSON.stringify(next) },
-      ],
-      { onConflict: "key" }
-    );
-
-    alert("כיול חדר " + room + " נשמר");
-  };
-
-  const resetRoomCalibration = async () => {
-    const room = calibrationRoom.trim();
-
-    if (!room) {
-      alert("נא להזין מספר חדר");
-      return;
-    }
-
-    const next = { ...calibrations };
-    delete next[room];
-
-    setCalibrations(next);
-    setCalibrationScale("1");
-    setCalibrationX("0");
-    setCalibrationY("0");
-    setCalibrationBottom("0");
-
-    await supabase.from("app_settings").upsert(
-      [
-        { key: "tv_room_calibrations", value: JSON.stringify(next) },
-      ],
-      { onConflict: "key" }
-    );
-
-    alert("כיול חדר " + room + " אופס");
   };
 
   const logout = async () => {
@@ -380,7 +290,7 @@ export default function Admin() {
             <div className="stats">
               <article><b>{posts.filter((p) => p.active).length}</b><span>הודעות פעילות</span></article>
               <article><b>{Object.values(enabledPinnedModules).filter(Boolean).length}</b><span>נעוצות פעילות</span></article>
-              <article><b>{Object.keys(calibrations).length}</b><span>חדרים מכוילים</span></article>
+              <article><b>0</b><span>הגדרות פעילות</span></article>
               <article><b>TV</b><span>תצוגת דיירים</span></article>
             </div>
 
@@ -393,10 +303,6 @@ export default function Admin() {
               </p>
 
               <div className="dashboard-pitches">
-                <article>
-                  <b>כיול לפי חדר</b>
-                  <span>כל מסך TV יכול לקבל כיול נפרד לפי מספר חדר, סטרימר או סוג מסך.</span>
-                </article>
                 <article>
                   <b>הודעות רגילות</b>
                   <span>הודעות שהמנהל שולח מצטרפות לתור אחרי הנעוצות וממשיכות לרוץ בשקפים.</span>
@@ -484,58 +390,6 @@ export default function Admin() {
               <option value="right">ימין למעלה</option>
               <option value="bottom">למטה במרכז</option>
             </select>
-
-            <section className="screen-calibration-card">
-              <h3>כיול מסך לפי חדר</h3>
-              <p>
-                הכנס מספר חדר, טען את הכיול שלו, שנה את הערכים ושמור.
-                במסך TV יש כפתור כיול נסתר מתחת לכפתור אפליקציות כדי להגדיר לאיזה חדר המסך שייך.
-              </p>
-
-              <div className="calibration-room-row">
-                <label>
-                  מספר חדר
-                  <input
-                    value={calibrationRoom}
-                    onChange={(e) => setCalibrationRoom(e.target.value)}
-                    placeholder="לדוגמה 101"
-                  />
-                </label>
-
-                <button type="button" onClick={loadRoomCalibration}>טען כיול</button>
-              </div>
-
-              <div className="calibration-grid">
-                <label>
-                  גודל תצוגה
-                  <input type="number" step="0.01" min="0.80" max="1.10" value={calibrationScale} onChange={(e) => setCalibrationScale(e.target.value)} />
-                  <span>לדוגמה 1 או 0.94</span>
-                </label>
-
-                <label>
-                  הזזה ימינה/שמאלה
-                  <input type="number" step="1" value={calibrationX} onChange={(e) => setCalibrationX(e.target.value)} />
-                  <span>פיקסלים, לדוגמה 0 או 20</span>
-                </label>
-
-                <label>
-                  הזזה למעלה/למטה
-                  <input type="number" step="1" value={calibrationY} onChange={(e) => setCalibrationY(e.target.value)} />
-                  <span>פיקסלים, לדוגמה 0 או -18</span>
-                </label>
-
-                <label>
-                  מרווח תחתון
-                  <input type="number" step="1" value={calibrationBottom} onChange={(e) => setCalibrationBottom(e.target.value)} />
-                  <span>פיקסלים, לדוגמה 0 או 24</span>
-                </label>
-              </div>
-
-              <div className="calibration-actions">
-                <button type="button" onClick={saveRoomCalibration}>שמור כיול לחדר</button>
-                <button type="button" onClick={resetRoomCalibration}>איפוס כיול חדר</button>
-              </div>
-            </section>
 
             <section className="pinned-settings">
               <h3>הודעות נעוצות במסך TV</h3>

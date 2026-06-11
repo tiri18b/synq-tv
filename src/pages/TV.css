@@ -1270,3 +1270,12 @@ body,
 .client-tv-ticker {
   bottom: 1.1vh !important;
 }
+
+
+/* REMOVE ADMIN CALIBRATION UI */
+.screen-calibration-card,
+.calibration-room-row,
+.calibration-grid,
+.calibration-actions {
+  display: none !important;
+}
