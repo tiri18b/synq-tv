@@ -206,7 +206,7 @@ export default function TV() {
 
     const slideTimer = setInterval(() => {
       setPageIndex((current) => (current + 1) % messagePages.length);
-    }, 5000);
+    }, 10000);
 
     return () => clearInterval(slideTimer);
   }, [messagePages.length]);
