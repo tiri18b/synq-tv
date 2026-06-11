@@ -115,7 +115,10 @@ export default function TV() {
     const readSet = new Set(readPostIds.map(String));
 
     return source
-      .filter((post) => !readSet.has(String(post.id)))
+      .filter((post) => {
+        if (post.type !== "urgent") return true;
+        return !readSet.has(String(post.id));
+      })
       .sort((a, b) => {
         const aUrgent = a.type === "urgent";
         const bUrgent = b.type === "urgent";
@@ -224,9 +227,11 @@ export default function TV() {
                   <p>{message.content}</p>
                 </div>
 
-                <button type="button" onClick={() => markAsRead(message.id)}>
-                  קראתי
-                </button>
+                {message.type === "urgent" && (
+                  <button type="button" onClick={() => markAsRead(message.id)}>
+                    קראתי
+                  </button>
+                )}
               </article>
             ))}
           </div>
