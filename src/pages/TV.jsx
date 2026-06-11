@@ -88,6 +88,14 @@ function parsePinnedModules(value) {
 }
 
 export default function TV() {
+  const openOldHomeFromTv = () => {
+    if (window.SynqAndroid && typeof window.SynqAndroid.openOldHome === "function") {
+      window.SynqAndroid.openOldHome();
+      return;
+    }
+
+    alert("כפתור זה פעיל רק באפליקציית הסטרימר");
+  };
   const [posts, setPosts] = useState([]);
   const [settings, setSettings] = useState({});
   const [weather, setWeather] = useState(null);
@@ -331,6 +339,10 @@ export default function TV() {
           </footer>
         </section>
       </section>
+
+      <button type="button" className="client-tv-home-button" onClick={openOldHomeFromTv}>
+        מסך הבית
+      </button>
 
       <footer className="client-tv-ticker">
         <marquee>{tickerText}</marquee>
