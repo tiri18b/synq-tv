@@ -210,7 +210,7 @@ function ModuleShowcase({ module }) {
       </section>
 
       <section className="module-upsell">
-        <b>אפשרויות הרחבה:</b>
+        <b>איך אפשר להרחיב את זה ללקוח?</b>
         <p>{module.upsell}</p>
       </section>
     </div>
