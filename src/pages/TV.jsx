@@ -7,29 +7,65 @@ import "./TV.css";
 const tickerText =
   "הגעתם הביתה - הגעתם ל- SYNQ * רשת המגורים החדשה לסטודנטים מקבוצת שבירו * SYNQ המקום שבו הכל קורה";
 
-const demoPosts = [
-  {
-    id: "demo-event",
-    title: "מפגש דיירים",
-    content: "יום שלישי | 18:00 | חדר כנסים",
-    type: "regular",
-    created_at: "2026-01-01T10:00:00.000Z",
+const pinnedMessages = {
+  events: {
+    id: "pinned-events",
+    title: "אירועים בבניין",
+    content: "עדכונים על מפגשי דיירים, סדנאות ופעילויות קהילה יופיעו כאן.",
+    type: "pinned",
+    icon: "📅",
+    order: 10,
   },
-  {
-    id: "demo-packages",
+  personal: {
+    id: "pinned-personal",
+    title: "איזור אישי לדייר",
+    content: "בהמשך ניתן להציג הודעות אישיות, מסמכים ועדכונים לפי דייר או חדר.",
+    type: "pinned",
+    icon: "👤",
+    order: 20,
+  },
+  service: {
+    id: "pinned-service",
+    title: "קריאות שירות",
+    content: "פתיחת תקלות, עדכון סטטוס ומעקב אחר טיפול בדירה או בשטחים הציבוריים.",
+    type: "pinned",
+    icon: "🔧",
+    order: 30,
+  },
+  packages: {
+    id: "pinned-packages",
     title: "חבילות בדלפק הקבלה",
-    content: "יש לאסוף בימים א׳ עד ה׳ בין 09:00-17:00",
-    type: "regular",
-    created_at: "2026-01-01T09:00:00.000Z",
+    content: "כאן יוצגו חבילות שממתינות לאיסוף ושעות איסוף מעודכנות.",
+    type: "pinned",
+    icon: "📦",
+    order: 40,
   },
-  {
-    id: "demo-maintenance",
+  maintenance: {
+    id: "pinned-maintenance",
     title: "תחזוקה שוטפת",
-    content: "ביום רביעי יבוצעו עבודות תחזוקה בבניין",
-    type: "regular",
-    created_at: "2026-01-01T08:00:00.000Z",
+    content: "עדכונים על עבודות תחזוקה, ניקיון, מעליות, מים וחשמל יוצגו כאן.",
+    type: "pinned",
+    icon: "🧹",
+    order: 50,
   },
-];
+  reception: {
+    id: "pinned-reception",
+    title: "דלפק קבלה",
+    content: "שעות פעילות, נהלים, הודעות קבלה ויצירת קשר עם הנהלת הבניין.",
+    type: "pinned",
+    icon: "🛎️",
+    order: 60,
+  },
+};
+
+const defaultPinnedModules = {
+  events: true,
+  personal: true,
+  service: true,
+  packages: true,
+  maintenance: true,
+  reception: true,
+};
 
 function getReadPostIds() {
   try {
@@ -41,6 +77,14 @@ function getReadPostIds() {
 
 function saveReadPostIds(ids) {
   localStorage.setItem("synq_read_posts", JSON.stringify(ids));
+}
+
+function parsePinnedModules(value) {
+  try {
+    return { ...defaultPinnedModules, ...JSON.parse(value || "{}") };
+  } catch {
+    return defaultPinnedModules;
+  }
 }
 
 export default function TV() {
@@ -111,24 +155,41 @@ export default function TV() {
   }, []);
 
   const messages = useMemo(() => {
-    const source = posts.length > 0 ? posts : demoPosts;
     const readSet = new Set(readPostIds.map(String));
+    const enabledPinnedModules = parsePinnedModules(settings.enabled_pinned_modules);
 
-    return source
-      .filter((post) => {
-        if (post.type !== "urgent") return true;
-        return !readSet.has(String(post.id));
-      })
-      .sort((a, b) => {
-        const aUrgent = a.type === "urgent";
-        const bUrgent = b.type === "urgent";
+    const urgentAdminMessages = posts
+      .filter((post) => post.type === "urgent")
+      .filter((post) => !readSet.has(String(post.id)))
+      .map((post) => ({
+        ...post,
+        icon: "🚨",
+        messageKind: "urgent",
+      }));
 
-        if (aUrgent && !bUrgent) return -1;
-        if (!aUrgent && bUrgent) return 1;
+    const activePinnedMessages = Object.entries(pinnedMessages)
+      .filter(([key]) => enabledPinnedModules[key])
+      .map(([, message]) => ({
+        ...message,
+        created_at: "2026-01-01T00:00:00.000Z",
+        messageKind: "pinned",
+      }))
+      .sort((a, b) => a.order - b.order);
 
-        return new Date(b.created_at || 0).getTime() - new Date(a.created_at || 0).getTime();
-      });
-  }, [posts, readPostIds]);
+    const regularAdminMessages = posts
+      .filter((post) => post.type !== "urgent")
+      .map((post) => ({
+        ...post,
+        icon: "📌",
+        messageKind: "regular",
+      }));
+
+    return [
+      ...urgentAdminMessages,
+      ...activePinnedMessages,
+      ...regularAdminMessages,
+    ];
+  }, [posts, readPostIds, settings.enabled_pinned_modules]);
 
   const messagePages = useMemo(() => {
     const pages = [];
@@ -137,7 +198,7 @@ export default function TV() {
       pages.push(messages.slice(i, i + 3));
     }
 
-    return pages.length > 0 ? pages : [demoPosts.slice(0, 3)];
+    return pages.length > 0 ? pages : [[]];
   }, [messages]);
 
   useEffect(() => {
@@ -218,16 +279,21 @@ export default function TV() {
             {visibleMessages.map((message, index) => (
               <article
                 key={message.id}
-                className={(message.type === "urgent" ? "urgent-message" : "") + (index === 0 ? " first-message" : "")}
+                className={[
+                  message.messageKind === "urgent" ? "urgent-message" : "",
+                  message.messageKind === "pinned" ? "pinned-message" : "",
+                  message.messageKind === "regular" ? "regular-message" : "",
+                  index === 0 ? "first-message" : "",
+                ].join(" ")}
               >
-                <div className="message-icon">{message.type === "urgent" ? "🚨" : "📌"}</div>
+                <div className="message-icon">{message.icon || "📌"}</div>
 
                 <div className="message-content">
                   <h3>{message.title}</h3>
                   <p>{message.content}</p>
                 </div>
 
-                {message.type === "urgent" && (
+                {message.messageKind === "urgent" && (
                   <button type="button" onClick={() => markAsRead(message.id)}>
                     קראתי
                   </button>
