@@ -345,7 +345,7 @@ export default function TV() {
       </button>
 
       <footer className="client-tv-ticker">
-        <marquee>{tickerText}</marquee>
+        <marquee direction="right">{tickerText}</marquee>
         <b>{now.toLocaleTimeString("he-IL", { hour: "2-digit", minute: "2-digit" })}</b>
       </footer>
     </main>
