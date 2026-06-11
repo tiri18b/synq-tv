@@ -148,8 +148,30 @@ export default function TV() {
       setNow(new Date());
     }, 1000);
 
+    const postsRefreshTimer = setInterval(() => {
+      loadPosts();
+    }, 5000);
+
+    const settingsRefreshTimer = setInterval(() => {
+      loadSettings();
+    }, 30000);
+
+    const reloadWhenVisible = () => {
+      if (!document.hidden) {
+        loadPosts();
+        loadSettings();
+      }
+    };
+
+    window.addEventListener("focus", reloadWhenVisible);
+    document.addEventListener("visibilitychange", reloadWhenVisible);
+
     return () => {
       clearInterval(clockTimer);
+      clearInterval(postsRefreshTimer);
+      clearInterval(settingsRefreshTimer);
+      window.removeEventListener("focus", reloadWhenVisible);
+      document.removeEventListener("visibilitychange", reloadWhenVisible);
       supabase.removeChannel(channel);
     };
   }, []);

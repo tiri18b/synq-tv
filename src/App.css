@@ -1158,3 +1158,43 @@ body,
     grid-template-columns: 1fr;
   }
 }
+
+
+/* APK AND KIOSK FIT */
+html,
+body,
+#root {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  overflow: hidden !important;
+  overscroll-behavior: none;
+}
+
+body {
+  touch-action: manipulation;
+}
+
+.admin-page {
+  height: 100vh !important;
+  max-height: 100vh !important;
+  overflow: hidden !important;
+}
+
+.admin-content {
+  height: 100vh !important;
+  max-height: 100vh !important;
+  overflow-y: auto !important;
+  padding-bottom: 40px !important;
+}
+
+.admin-page aside {
+  height: 100vh !important;
+  max-height: 100vh !important;
+  overflow-y: auto !important;
+}
+
+.admin-page aside::-webkit-scrollbar,
+.admin-content::-webkit-scrollbar {
+  width: 6px;
+}
