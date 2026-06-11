@@ -296,7 +296,7 @@ export default function TV() {
 
         <section className="client-tv-welcome">
           <h1>ברוכים הבאים</h1>
-          <h2>למעונות סטודנטים</h2>
+          <h2>למעונות הסטודנטים</h2>
         </section>
 
         <section className="client-tv-message-stack">

@@ -348,3 +348,31 @@ body,
     min-height: 8vh;
   }
 }
+
+
+/* KEEP FEATURE PAGES INSIDE SCREEN */
+.feature-content-side {
+  padding-top: 3.4vh !important;
+  padding-bottom: 8.5vh !important;
+}
+
+.feature-logo {
+  margin-bottom: 1.6vh !important;
+}
+
+.feature-hero-card {
+  margin-bottom: 1vh !important;
+}
+
+.feature-actions {
+  margin-bottom: 1vh !important;
+}
+
+.feature-examples {
+  margin-bottom: 1vh !important;
+}
+
+.feature-back-button {
+  height: 5vh !important;
+  min-height: 38px !important;
+}
