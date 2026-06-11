@@ -341,7 +341,7 @@ export default function TV() {
       </section>
 
       <button type="button" className="client-tv-home-button" onClick={openOldHomeFromTv}>
-        מסך הבית
+        אפליקציות
       </button>
 
       <footer className="client-tv-ticker">
