@@ -465,7 +465,7 @@ export default function Admin() {
           <div className="admin-card settings-card">
             <h2>הגדרות מסך TV</h2>
             <p className="admin-helper">
-              כאן מנהלים את מיקום השעה, התאריך ומזג האוויר, את ההודעות הנעוצות, ואת כיול התצוגה לפי מספר חדר.
+              כאן מנהלים את מיקום השעה, התאריך ומזג האוויר ואת ההודעות הנעוצות במסך TV.
             </p>
 
             <label>עיר להצגה</label>

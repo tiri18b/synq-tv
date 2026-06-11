@@ -221,12 +221,7 @@ export default function TV() {
     return allCalibrations[roomId] || allCalibrations.default || defaultCalibration;
   }, [settings.tv_room_calibrations, roomId]);
 
-  const stageStyle = {
-    "--tv-scale": String(calibration.scale ?? 1),
-    "--tv-x": (Number(calibration.x) || 0) + "px",
-    "--tv-y": (Number(calibration.y) || 0) + "px",
-    "--tv-bottom-safe": (Number(calibration.bottom) || 0) + "px",
-  };
+  const stageStyle = {};
 
   const messages = useMemo(() => {
     const readSet = new Set(readPostIds.map(String));
@@ -268,8 +263,8 @@ export default function TV() {
   const messagePages = useMemo(() => {
     const pages = [];
 
-    for (let i = 0; i < messages.length; i += 3) {
-      pages.push(messages.slice(i, i + 3));
+    for (let i = 0; i < messages.length; i += 2) {
+      pages.push(messages.slice(i, i + 2));
     }
 
     return pages.length > 0 ? pages : [[]];
@@ -298,9 +293,7 @@ export default function TV() {
   const visibleMessages = messagePages[pageIndex % messagePages.length] || [];
 
   return (
-    <main className="client-tv-shell" style={stageStyle}>
-      <section className="client-tv-stage">
-        <main className="client-tv">
+    <main className="client-tv">
           <section className="client-tv-image-side">
             <img src={buildingImage} className="client-tv-building" alt="בניין SYNQ" />
 
@@ -390,20 +383,10 @@ export default function TV() {
             אפליקציות
           </button>
 
-          <button type="button" className="client-tv-calibration-button" onClick={openCalibrationPrompt}>
-            כיול מסך
-          </button>
-
-          <div className="client-tv-room-badge">
-            חדר {roomId}
-          </div>
-
           <footer className="client-tv-ticker">
             <marquee direction="right">{tickerText}</marquee>
             <b>{now.toLocaleTimeString("he-IL", { hour: "2-digit", minute: "2-digit" })}</b>
           </footer>
-        </main>
-      </section>
     </main>
   );
 }
